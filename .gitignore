@@ -1,0 +1,3 @@
+*.swp
+*.sqlite3
+rest-api/env/*
