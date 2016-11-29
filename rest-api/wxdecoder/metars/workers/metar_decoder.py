@@ -5,8 +5,35 @@ class MetarDecoder:
 
   def decode_metar(self, raw_metar):
     print ">>> Decoding METAR: %s" % raw_metar
-    parts = raw_metar.split()
-    print ">>> METAR parts:\n>>> %s" % parts
+    tokens = raw_metar.split()
+    tokens = self.process_tokens(tokens)
+    # TODO: assert that the tokens length is 0
+
+    # TODO: process the fields, concatenate them nicely, and return the output
+    return raw_metar # tmp
+
+  def process_tokens(self, tokens):
+    # Each processor gets called in turn. If the next token of the METAR matches
+    # what that processor expects, it decodes the relevant section (or sections),
+    # stores the decoded result in the relevant class field, strips the tokens
+    # from the METAR and returns the result
+
+    # If the token doesn't match what it expects we can assume it's been omitted
+    # from the METAR and just return from the processor without doing anything.
+    tokens = self.process_metar_header(tokens)
+    tokens = self.process_iaao_id(tokens)
+
+    # Return any remaining tokens
+    return tokens # tmp - not sure what we want to return here
+
+  def process_metar_header(self, tokens):
+    if tokens[0] == 'METAR':
+      tokens.pop(0)
+    return tokens
+
+  def process_icao_id(self, tokens):
+    self.icao_id = tokens.pop(0)
+    return tokens
 
   # METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html.
   icao_id = ''
