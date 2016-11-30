@@ -35,10 +35,21 @@ class MetarDecoder:
     self.icao_id = tokens.pop(0)
     return tokens
 
+  def process_datetime(self, tokens):
+    if tokens[0].endswith('Z'):
+      self.obs_datetime = tokens.pop(0)
+    return tokens
+
+  def process_automated_obs_flag(self, tokens):
+    if tokens[0] == 'AUTO':
+      self.mod_auto = True
+      tokens.pop(0)
+    return tokens
+
   # METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html.
   icao_id = ''
   obs_datetime = None
-  mod_auto = ''
+  mod_auto = False
   wind_dir_speed = ''
   vis = ''
   rvr = ''
