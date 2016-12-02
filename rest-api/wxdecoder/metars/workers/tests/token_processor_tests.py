@@ -7,9 +7,26 @@ class TestTokenProcessor:
 
   @classmethod
   def setup_class(cls):
-    cls.metar = 'METAR KHIO 290653Z AUTO 00000KT 10SM FEW032 OVC041 06/05 ' \
-                'A3017 RMK AO2 RAB35E44 SLP219 P0000 T00560050'
-    cls.tokens = cls.metar.split()
+    pass
+
+  ### Test full token processor
+  def test_process_metar_khio(self):
+    metar = 'METAR KHIO 290653Z AUTO 00000KT 10SM FEW032 OVC041 06/05 ' \
+            'A3017 RMK AO2 RAB35E44 SLP219 P0000 T00560050'
+    decoder = MetarDecoder()
+    res = decoder.process_tokens(metar.split())
+    assert_equals(decoder.is_special_report, False)
+    assert_equals(decoder.icao_id, 'KHIO')
+    assert_equals(decoder.obs_datetime, '290653Z')
+    assert_equals(decoder.mod_auto, True)
+    assert_equals(decoder.wind_dir_speed, '00000KT')
+    assert_equals(decoder.vis, '10SM')
+    assert_equals(decoder.wx_phenomena, [])
+    assert_equals(decoder.sky_condition, ['FEW032', 'OVC041'])
+    assert_equals(decoder.temp, '06')
+    assert_equals(decoder.dewpoint, '05')
+    assert_equals(decoder.altimeter, 'A3017')
+    assert_equals(decoder.remarks, 'RMK AO2 RAB35E44 SLP219 P0000 T00560050')
 
   ### Test Individual Token Processors
   def test_process_metar_header_with_metar_header(self):
@@ -121,7 +138,7 @@ class TestTokenProcessor:
     tokens = 'R11/P6000FT -RA BR'.split()
     res = decoder.process_rvr(tokens)
     assert_equals(decoder.rvr, 'R11/P6000FT')
-    assert_equals(tokens, ['-RA', 'BR'])
+    assert_equals(res, ['-RA', 'BR'])
 
   def test_process_rvr_missing(self):
     ### If the RVR is missing, the MetarDecoder's 'rvr' field should
@@ -130,7 +147,7 @@ class TestTokenProcessor:
     tokens = 'VRB005 -RA BR'.split()
     res = decoder.process_rvr(tokens)
     assert_equals(decoder.rvr, '')
-    assert_equals(tokens, ['VRB005', '-RA', 'BR'])
+    assert_equals(res, ['VRB005', '-RA', 'BR'])
 
   def test_process_rvr_missing_with_similar_wx_phenomena(self):
     ### The RVR field begins with 'R', but the following WX phenomena
@@ -141,7 +158,65 @@ class TestTokenProcessor:
     res = decoder.process_wind_dir_speed(tokens)
     res = decoder.process_rvr(res)
     assert_equals(decoder.rvr, '')
-    assert_equals(tokens, ['RA'])
+    assert_equals(res, ['RA'])
+
+  def test_process_wx_phenomena(self):
+    decoder = MetarDecoder()
+    tokens = '-RA BR BKN015 OVC025'.split()
+    res = decoder.process_wx_phenomena(tokens)
+    assert_equals(decoder.wx_phenomena, ['-RA', 'BR'])
+    assert_equals(res, ['BKN015', 'OVC025'])
+
+  def test_process_wx_phenomena_missing(self):
+    decoder = MetarDecoder()
+    tokens = 'FEW020 SCT150'.split()
+    res = decoder.process_wx_phenomena(tokens)
+    assert_equals(decoder.wx_phenomena, [])
+    assert_equals(res, ['FEW020', 'SCT150'])
+
+  def test_process_sky_condition(self):
+    decoder = MetarDecoder()
+    tokens = 'BKN015 OVC025 06/04'.split()
+    res = decoder.process_sky_condition(tokens)
+    assert_equals(decoder.sky_condition, ['BKN015', 'OVC025'])
+    assert_equals(res, ['06/04'])
+
+  def test_process_sky_condition_missing(self):
+    decoder = MetarDecoder()
+    tokens = '06/04 A2990'.split()
+    res = decoder.process_sky_condition(tokens)
+    assert_equals(decoder.sky_condition, [])
+    assert_equals(res, ['06/04', 'A2990'])
+
+  def test_process_tmp_dewpoint(self):
+    decoder = MetarDecoder()
+    tokens = '06/04 A2990'.split()
+    res = decoder.process_temp_dewpoint(tokens)
+    assert_equals(decoder.temp, '06')
+    assert_equals(decoder.dewpoint, '04')
+    assert_equals(res, ['A2990'])
+
+  def test_process_temp_dewpoint_missing(self):
+    decoder = MetarDecoder()
+    tokens = 'A2990 RMK'.split()
+    res = decoder.process_temp_dewpoint(tokens)
+    assert_equals(decoder.temp, '')
+    assert_equals(decoder.dewpoint, '')
+    assert_equals(res, ['A2990', 'RMK'])
+
+  def test_process_altimeter(self):
+    decoder = MetarDecoder()
+    tokens = 'A2990 RMK'.split()
+    res = decoder.process_altimeter(tokens)
+    assert_equals(decoder.altimeter, 'A2990')
+    assert_equals(res, ['RMK'])
+
+  def test_process_altimeter_missing(self):
+    decoder = MetarDecoder()
+    tokens = 'RMK TORNADO'.split()
+    res = decoder.process_altimeter(tokens)
+    assert_equals(decoder.altimeter, '')
+    assert_equals(res, ['RMK', 'TORNADO'])
 
   @classmethod
   def teardown_class(cls):
