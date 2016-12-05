@@ -3,7 +3,7 @@ from nose.tools import assert_equals
 
 from metars.workers.metar_parser import MetarParser
 
-class TestTokenProcessor:
+class TestMetarParser:
 
   @classmethod
   def setup_class(cls):
