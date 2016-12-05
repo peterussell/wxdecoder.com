@@ -1,3 +1,5 @@
+import json
+
 class MetarParser:
 
   def parse_metar(self, raw_metar):
@@ -116,7 +118,8 @@ class MetarParser:
 
   def parse_altimeter(self, tokens):
     if tokens[0].startswith('A'):
-      self.parsed_metar["altimeter"] = tokens.pop(0)
+      tok = tokens.pop(0)
+      self.parsed_metar["altimeter"] = tok.replace('A', '')
     return tokens
 
   ### Helpers - TODO: Move to utils module
@@ -131,39 +134,6 @@ class MetarParser:
 
   def __init__(self):
     # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
-    self.parsed_metar = {
-      'is_special_report': False,
-      'icao_id': '',
-      'obs_datetime': None,
-      'mod_auto': False,
-      'wind_dir_speed': '', # TODO: this should probably be an object
-      'wind_dir_variation': '', # TODO this should be an attribute in he wind_dir_speed object
-      'vis': '', # TODO: could be an object (can include 'M' prefix to indicate <1/4SM)
-      'rvr': '', # TODO: could be an object, can include modifiers which we may want to store
-      'wx_phenomena': [],
-      'sky_condition': [],
-      'temp': '',
-      'dewpoint': '',
-      'altimeter': '',
-      'remarks': '',
-      # This is all in the Remarks section, implementation coming to a future version near you.
-      # 'tornadic_activity': []
-      # 'stn_type': ''
-      # 'peak_wind': ''
-      # 'wind_shift': ''
-      # 'variable_vis': ''
-      # 'vis_second_loc': ''
-      # 'lightning': []
-      # 'precip_ts': []
-      # 'virga': ''
-      # 'variable_ceilingg': ''
-      # 'ceiling_second_loc': ''
-      # 'press_rise_fall_rapid': ''
-      # 'sea_level_press': ''
-      # 'hourly_precip': ''
-      # 'three_six_hour_precip': []
-      # 'twenty_four_hour_precip': []
-      # 'press_tendency': ''
-      # 'sensor_status': []
-      # 'maint_reqd': ''
-    }
+    with open('metar.json') as metar_file:
+      contents = json.load(metar_file)
+      self.parsed_metar = contents["metar"]

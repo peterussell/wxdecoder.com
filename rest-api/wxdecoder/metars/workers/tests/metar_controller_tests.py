@@ -26,5 +26,5 @@ class TestMetarController:
     assert_equals(res['sky_condition'], ["FEW032", "OVC041"])
     assert_equals(res['temp'], "06")
     assert_equals(res['dewpoint'], "05")
-    assert_equals(res['altimeter'], "A3017")
+    assert_equals(res['altimeter'], "3017")
     assert_equals(res['remarks'], "RMK AO2 RAB35E44 SLP219 P0000 T00560050")

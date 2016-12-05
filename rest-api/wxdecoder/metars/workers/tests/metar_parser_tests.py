@@ -25,7 +25,7 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["sky_condition"], ['FEW032', 'OVC041'])
     assert_equals(parser.parsed_metar["temp"], '06')
     assert_equals(parser.parsed_metar["dewpoint"], '05')
-    assert_equals(parser.parsed_metar["altimeter"], 'A3017')
+    assert_equals(parser.parsed_metar["altimeter"], '3017')
     assert_equals(parser.parsed_metar["remarks"], 'RMK AO2 RAB35E44 SLP219 P0000 T00560050')
 
   ### Test Individual Token Processors
@@ -208,7 +208,7 @@ class TestMetarParser:
     parser = MetarParser()
     tokens = 'A2990 RMK'.split()
     res = parser.parse_altimeter(tokens)
-    assert_equals(parser.parsed_metar["altimeter"], 'A2990')
+    assert_equals(parser.parsed_metar["altimeter"], '2990')
     assert_equals(res, ['RMK'])
 
   def test_parse_altimeter_missing(self):
