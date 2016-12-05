@@ -13,4 +13,5 @@ class TestMetarController:
   def test_decode_metar(self):
     with open('tests/data/khio_encoded.json') as data:
       khio = json.load(data)
-    print khio
+    decoder = MetarDecoder()
+    decoder.decode_metar(khio["metar"])
