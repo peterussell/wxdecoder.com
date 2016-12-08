@@ -134,6 +134,6 @@ class MetarParser:
 
   def __init__(self):
     # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
-    with open('metar.json') as metar_file:
+    with open('metar-defaults.json') as metar_file:
       contents = json.load(metar_file)
       self.parsed_metar = contents["metar"]

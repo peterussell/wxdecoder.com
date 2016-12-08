@@ -1,7 +1,8 @@
+import json
+
 class MetarDecoder:
 
   def decode_metar(self, json_metar):
-    print ">>> Decoding metar: %s" % json_metar
     self.decode_is_special_report(json_metar["is_special_report"])
     self.decode_icao_id(json_metar["icao_id"])
     self.decode_obs_datetime(json_metar["obs_datetime"])
@@ -38,104 +39,120 @@ class MetarDecoder:
     # tmp
     return json_metar
 
-  def decode_is_special_report(self, enc):
+  def decode_is_special_report(self, val):
+    key = "is_special_report"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key]["decoded"] = val
+
+  def decode_icao_id(self, val):
+    key = "icao_id"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key]["decoded"] = val
+
+  def decode_obs_datetime(self, val):
+    key = "obs_datetime"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key]["decoded"]["date"] = val[:2]
+    self.decoded_metar[key]["decoded"]["time"] = val[2:-1]
+
+  def decode_mod_auto(self, val):
+    key = "mod_auto"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key]["decoded"] = val
+
+  def decode_wind_dir_speed(self, val):
     pass
 
-  def decode_icao_id(self, enc):
+  def decode_wind_dir_variation(self, val):
     pass
 
-  def decode_obs_datetime(self, enc):
+  def decode_vis(self, val):
     pass
 
-  def decode_mod_auto(self, enc):
+  def decode_rvr(self, val):
     pass
 
-  def decode_wind_dir_speed(self, enc):
+  def decode_wx_phenomena(self, val):
     pass
 
-  def decode_wind_dir_variation(self, enc):
+  def decode_sky_condition(self, val):
     pass
 
-  def decode_vis(self, enc):
+  def decode_temp(self, val):
     pass
 
-  def decode_rvr(self, enc):
+  def decode_dewpoint(self, val):
     pass
 
-  def decode_wx_phenomena(self, enc):
+  def decode_altimeter(self, val):
     pass
 
-  def decode_sky_condition(self, enc):
+  def decode_remarks(self, val):
     pass
 
-  def decode_temp(self, enc):
+  def decode_tornadic_activity(self, val):
     pass
 
-  def decode_dewpoint(self, enc):
+  def decode_stn_type(self, val):
     pass
 
-  def decode_altimeter(self, enc):
+  def decode_peak_wind(self, val):
     pass
 
-  def decode_remarks(self, enc):
+  def decode_wind_shift(self, val):
     pass
 
-  def decode_tornadic_activity(self, enc):
+  def decode_variable_vis(self, val):
     pass
 
-  def decode_stn_type(self, enc):
+  def decode_vis_second_loc(self, val):
     pass
 
-  def decode_peak_wind(self, enc):
+  def decode_lightning(self, val):
     pass
 
-  def decode_wind_shift(self, enc):
+  def decode_precip_ts(self, val):
     pass
 
-  def decode_variable_vis(self, enc):
+  def decode_virga(self, val):
     pass
 
-  def decode_vis_second_loc(self, enc):
+  def decode_variable_ceiling(self, val):
     pass
 
-  def decode_lightning(self, enc):
+  def decode_ceiling_second_loc(self, val):
     pass
 
-  def decode_precip_ts(self, enc):
+  def decode_pressure_rise_fall_rapid(self, val):
     pass
 
-  def decode_virga(self, enc):
+  def decode_sea_level_pressure(self, val):
     pass
 
-  def decode_variable_ceiling(self, enc):
+  def decode_hourly_precip(self, val):
     pass
 
-  def decode_ceiling_second_loc(self, enc):
+  def decode_three_six_hour_precip(self, val):
     pass
 
-  def decode_pressure_rise_fall_rapid(self, enc):
+  def decode_twenty_four_hour_precip(self, val):
     pass
 
-  def decode_sea_level_pressure(self, enc):
+  def decode_pressure_tendency(self, val):
     pass
 
-  def decode_hourly_precip(self, enc):
+  def decode_sensor_status(self, val):
     pass
 
-  def decode_three_six_hour_precip(self, enc):
+  def decode_maint_reqd(self, val):
     pass
 
-  def decode_twenty_four_hour_precip(self, enc):
-    pass
-
-  def decode_pressure_tendency(self, enc):
-    pass
-
-  def decode_sensor_status(self, enc):
-    pass
-
-  def decode_maint_reqd(self, enc):
-    pass
+  ## Helpers
+  def copy_orig_value(self, key, value):
+    self.decoded_metar[key]["orig"] = value
 
   def __init__(self):
-    print ">>> called decode metar"
+    # Load defaults
+    with open('metar-decoded-defaults.json') as decoded_metar_file:
+      contents = json.load(decoded_metar_file)
+      self.decoded_metar = contents["metar"]

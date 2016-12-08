@@ -1,0 +1,139 @@
+{
+  "metar": {
+    "is_special_report": {
+      "orig": false,
+      "decoded": false
+    },
+    "icao_id": {
+      "orig": "",
+      "decoded": ""
+    },
+    "obs_datetime": {
+      "orig": "",
+      "decoded": {
+        "date": "",
+        "time": ""
+      }
+    },
+    "mod_auto": {
+      "orig": false,
+      "decoded": false
+    },
+    "wind_dir_speed": {
+      "orig": "",
+      "decoded": ""
+    },
+    "wind_dir_variation": {
+      "orig": "",
+      "decoded": ""
+    },
+    "vis": {
+      "orig": "",
+      "decoded": ""
+    },
+    "rvr": {
+      "orig": "",
+      "decoded": ""
+    },
+    "wx_phenomena": {
+      "orig": [],
+      "decoded": []
+    },
+    "sky_condition": {
+      "orig": [],
+      "decoded": []
+    },
+    "temp": {
+      "orig": "",
+      "decoded": ""
+    },
+    "dewpoint": {
+      "orig": "",
+      "decoded": ""
+    },
+    "altimeter": {
+      "orig": "",
+      "decoded": ""
+    },
+    "remarks": {
+      "orig": "",
+      "decoded": ""
+    },
+    "tornadic_activity": {
+      "orig": [],
+      "decoded": []
+    },
+    "stn_type": {
+      "orig": "",
+      "decoded": ""
+    },
+    "peak_wind": {
+      "orig": "",
+      "decoded": ""
+    },
+    "wind_shift": {
+      "orig": "",
+      "decoded": ""
+    },
+    "variable_vis": {
+      "orig": "",
+      "decoded": ""
+    },
+    "vis_second_loc": {
+      "orig": "",
+      "decoded": ""
+    },
+    "lightning": {
+      "orig": [],
+      "decoded": []
+    },
+    "precip_ts": {
+      "orig": [],
+      "decoded": []
+    },
+    "virga": {
+      "orig": "",
+      "decoded": ""
+    },
+    "variable_ceiling": {
+      "orig": "",
+      "decoded": ""
+    },
+    "ceiling_second_loc": {
+      "orig": "",
+      "decoded": ""
+    },
+    "pressure_rise_fall_rapid": {
+      "orig": "",
+      "decoded": ""
+    },
+    "sea_level_pressure": {
+      "orig": "",
+      "decoded": ""
+    },
+    "hourly_precip": {
+      "orig": "",
+      "decoded": ""
+    },
+    "three_six_hour_precip": {
+      "orig": [],
+      "decoded": []
+    },
+    "twenty_four_hour_precip": {
+      "orig": [],
+      "decoded": []
+    },
+    "pressure_tendency": {
+      "orig": "",
+      "decoded": ""
+    },
+    "sensor_status": {
+      "orig": [],
+      "decoded": []
+    },
+    "maint_reqd": {
+      "orig": "",
+      "decoded": ""
+    }
+  }
+}
