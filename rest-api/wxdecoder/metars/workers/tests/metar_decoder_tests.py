@@ -59,3 +59,38 @@ class TestMetarController:
     decoder.decode_mod_auto(val)
     res = decoder.decoded_metar["mod_auto"]["decoded"]
     assert_equals(res, False)
+
+  def test_decode__wind_dir_speed_basic(self):
+    val = "11013KT"
+    decoder = MetarDecoder()
+    decoder.decode_wind_dir_speed(val)
+    res = decoder.decoded_metar["wind_dir_speed"]["decoded"]
+    assert_equals(res, "from 110 degrees, at 13 knots")
+
+  def test_decode_wind_dir_speed_with_gusts(self):
+    val = "18014G18KT"
+    decoder = MetarDecoder()
+    decoder.decode_wind_dir_speed(val)
+    res = decoder.decoded_metar["wind_dir_speed"]["decoded"]
+    assert_equals(res, "from 180 degrees, at 14 knots gusting to 18 knots")
+
+  def test_decode_wind_single_knot_speed_isnt_pluralized(self):
+    val = "02001KT"
+    decoder = MetarDecoder()
+    decoder.decode_wind_dir_speed(val)
+    res = decoder.decoded_metar["wind_dir_speed"]["decoded"]
+    assert_equals(res, "from 020 degrees, at 1 knot")
+
+  def test_decode_wind_light_variable(self):
+    val = "VRB004KT"
+    decoder = MetarDecoder()
+    decoder.decode_wind_dir_speed(val)
+    res = decoder.decoded_metar["wind_dir_speed"]["decoded"]
+    assert_equals(res, "variable, at 4 knots")
+
+  def test_decode_wind_light_variable_single_knot_isnt_pluralized(self):
+    val = "VRB001KT"
+    decoder = MetarDecoder()
+    decoder.decode_wind_dir_speed(val)
+    res = decoder.decoded_metar["wind_dir_speed"]["decoded"]
+    assert_equals(res, "variable, at 1 knot")

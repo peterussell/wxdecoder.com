@@ -61,7 +61,43 @@ class MetarDecoder:
     self.decoded_metar[key]["decoded"] = val
 
   def decode_wind_dir_speed(self, val):
-    pass
+    key = "wind_dir_speed"
+    self.copy_orig_value(key, val)
+
+    # Handle light and variable winds (< 7KTS)
+    if val.startswith("VRB"):
+      kt_index = val.find("KT")
+      speed = val[4:kt_index].lstrip("0")
+      speed_unit = self.get_knot_or_knots(speed)
+      self.decoded_metar[key]["decoded"] = \
+        "variable, at %s %s" % (speed, speed_unit)
+      return
+
+    # Wind direction is always 3 characters
+    direction = val[:3]
+
+    kt_index = val.find("KT")
+    gust_index = val.find("G")
+
+    # Keep going until we get to 'G' or 'KT'
+    has_gusts = gust_index != -1
+    if has_gusts:
+      speed = val[3:gust_index]
+      gust = val[gust_index+1:kt_index]
+    else:
+      speed = val[3:kt_index]
+      gust = ""
+
+    # Strip any leading 0s on the wind speed
+    speed = speed.lstrip("0")
+    speed_unit = self.get_knot_or_knots(speed)
+
+    # Assemble the output
+    res = "from %s degrees, at %s %s" % (direction, speed, speed_unit)
+    if has_gusts:
+      res += " gusting to %s knots" % gust
+
+    self.decoded_metar[key]["decoded"] = res
 
   def decode_wind_dir_variation(self, val):
     pass
@@ -150,6 +186,17 @@ class MetarDecoder:
   ## Helpers
   def copy_orig_value(self, key, value):
     self.decoded_metar[key]["orig"] = value
+
+  def get_knot_or_knots(self, num_knots):
+    try:
+      val = int(num_knots)
+      if val == 1:
+        return "knot"
+      else:
+        return "knots"
+    except ValueError:
+      return "knots"
+
 
   def __init__(self):
     # Load defaults
