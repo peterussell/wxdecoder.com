@@ -239,7 +239,7 @@ class TestMetarController:
     assert_equals(res, ["heavy spray"])
 
   def test_decode_wx_phenomena_tornado_waterspout_special_case(self):
-    # +FC is a special case for tornados and waterspouds - the
+    # +FC is a special case for tornadoes and waterspouds - the
     # modifier '+' should be ignored.
     val = ["+FC"]
     decoder = MetarDecoder()
