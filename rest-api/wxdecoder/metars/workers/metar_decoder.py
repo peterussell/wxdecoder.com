@@ -173,9 +173,6 @@ class MetarDecoder:
       variable_to = self.localize_num(variable_to[:ft_index_variable])
       res_rvr = "variable, from %s to %s feet" % \
         (variable_from, variable_to)
-#      print "variable_to %s" % variable_to
-#      print ("ft_index_variable %s" % ft_index_variable)
-#      print "res_rvr: %s" % res_rvr
 
     # RVR - non-variable
     else:
@@ -195,7 +192,53 @@ class MetarDecoder:
       "%s%s%s (runway %s)" % (res_modifier, res_rvr, res_trend, res_rwy)
 
   def decode_wx_phenomena(self, val):
-    pass
+    key = "wx_phenomena"
+    self.copy_orig_value(key, val)
+    del self.decoded_metar[key][self.DECODED_KEY][:]
+
+    # Load the mappings (METAR code -> plain English)
+    with open('data/wx-phenomena.json') as wxp:
+      mappings = json.load(wxp)["codes"]
+
+    for full_token in val:
+      decoded_wx = []
+
+      # Find the modifier (light, moderate, heavy, in the vicinity)
+      post_mod = ""
+      if full_token.startswith("+FC"):
+        # Special case for '+FC' (tornados/waterspouts)
+        self.decoded_metar[key][self.DECODED_KEY].append(mappings["+FC"])
+        continue
+      elif full_token.startswith("-"):
+        decoded_wx.append("light")
+        full_token = full_token[1:]
+      elif full_token.startswith("+"):
+        decoded_wx.append("heavy")
+        full_token = full_token[1:]
+      elif full_token.startswith("VC"):
+        post_mod = "in the vicinity" # save post modifiers to be appended after other tokens
+        full_token = full_token[2:]
+      else:
+        decoded_wx.append("moderate")
+
+      # Split the code into 2-char pieces
+      tokens = [full_token[i:i+2] for i in range(0, len(full_token), 2)]
+
+      # For each piece of the phenomenon, check if it exists in the mappings;
+      # if so, save the english equivalent.
+      for token in tokens:
+        if token in mappings:
+          decoded_wx.append(mappings[token])
+      else:
+        # TODO: got a WX phenomena we can't identify, should log or throw an error
+        pass
+
+      # Add the post modifiers
+      if post_mod != "":
+        decoded_wx.append(post_mod)
+
+      # Put it together...
+      self.decoded_metar[key][self.DECODED_KEY].append(" ".join(decoded_wx))
 
   def decode_sky_condition(self, val):
     pass

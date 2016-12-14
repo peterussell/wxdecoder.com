@@ -13,7 +13,7 @@ class TestMetarController:
     pass
 
   def test_decode_metar(self):
-    with open('tests/data/khio_encoded.json') as data:
+    with open('tests/data/khio-encoded.json') as data:
       khio = json.load(data)
     decoder = MetarDecoder()
     decoder.decode_metar(khio["metar"])
@@ -204,3 +204,52 @@ class TestMetarController:
     decoder.decode_rvr(val)
     res = decoder.decoded_metar["rvr"][self.DECODED_KEY]
     assert_equals(res, "5,500 feet, no change (runway 20)")
+
+
+  def test_decode_wx_phenomena_basic(self):
+    val = ["SHRA"]
+    decoder = MetarDecoder()
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["moderate showers of rain"])
+
+  def test_decode_wx_phenomena_in_the_vicinity(self):
+    val = ["VCFG"]
+    decoder = MetarDecoder()
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["fog in the vicinity"])
+
+  def test_decode_wx_phenomena_modifiers(self):
+    decoder = MetarDecoder()
+    # Light
+    val = ["-PY"]
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["light spray"])
+    # Moderate
+    val = ["PY"]
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["moderate spray"])
+    # Heavy
+    val = ["+PY"]
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["heavy spray"])
+
+  def test_decode_wx_phenomena_tornado_waterspout_special_case(self):
+    # +FC is a special case for tornados and waterspouds - the
+    # modifier '+' should be ignored.
+    val = ["+FC"]
+    decoder = MetarDecoder()
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["funnel cloud (tornado or waterspout)"])
+
+  def test_decode_wx_phenomena_multiple_values(self):
+    val = ["-SHRA", "+BR"]
+    decoder = MetarDecoder()
+    decoder.decode_wx_phenomena(val)
+    res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
+    assert_equals(res, ["light showers of rain", "heavy mist"])
