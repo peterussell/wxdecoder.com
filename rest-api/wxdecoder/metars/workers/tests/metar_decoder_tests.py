@@ -239,7 +239,7 @@ class TestMetarController:
     assert_equals(res, ["heavy spray"])
 
   def test_decode_wx_phenomena_tornado_waterspout_special_case(self):
-    # +FC is a special case for tornadoes and waterspouds - the
+    # +FC is a special case for tornadoes and waterspouts - the
     # modifier '+' should be ignored.
     val = ["+FC"]
     decoder = MetarDecoder()
@@ -253,3 +253,62 @@ class TestMetarController:
     decoder.decode_wx_phenomena(val)
     res = decoder.decoded_metar["wx_phenomena"][self.DECODED_KEY]
     assert_equals(res, ["light showers of rain", "heavy mist"])
+
+  def test_decode_sky_condition_basic(self):
+    val = ["FEW020"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["few clouds at 2,000 feet"])
+
+  def test_decode_sky_condition_sky_clear(self):
+    val = ["SKC"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["sky clear"])
+
+  def test_decode_sky_condition_sky_clear_automated(self):
+    val = ["CLR"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["no clouds below 12,000 feet"])
+
+  def test_decode_sky_condition_vertical_visibility(self):
+    val = ["VV048"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["vertical visibility (indefinite ceiling) at 4,800 feet"])
+
+  def test_decode_sky_condition_cumulonimbus(self):
+    val = ["SCT085CB"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["scattered clouds at 8,500 feet (cumulonimbus)"])
+
+  def test_decode_sky_condition_towering_cumulus(self):
+    val = ["OVC030TCU"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["overcast at 3,000 feet (towering cumulus)"])
+
+  def test_decode_sky_condition_altitude_below_station(self):
+    val = ["SCT///"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["scattered clouds below reporting station elevation"])
+
+  def test_decode_sky_condition_multiple_layers(self):
+    val = ["SCT///", "FEW032", "OVC100TCU"]
+    decoder = MetarDecoder()
+    decoder.decode_sky_condition(val)
+    res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
+    assert_equals(res, ["scattered clouds below reporting station elevation",
+                        "few clouds at 3,200 feet",
+                        "overcast at 10,000 feet (towering cumulus)"])
+

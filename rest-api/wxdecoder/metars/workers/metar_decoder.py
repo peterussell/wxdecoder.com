@@ -241,7 +241,76 @@ class MetarDecoder:
       self.decoded_metar[key][self.DECODED_KEY].append(" ".join(decoded_wx))
 
   def decode_sky_condition(self, val):
-    pass
+    key = "sky_condition"
+    self.copy_orig_value(key, val)
+    del self.decoded_metar[key][self.DECODED_KEY][:]
+
+    for layer in val:
+      decoded_layer = ""
+
+      # Layer type
+      layer_type_len = 3 # default (FEW, SCT, BKN, OVC)
+
+      # Start with special cases SKC and CLR. They have no altitude
+      # value so just save them and move to the next layer
+      if layer.startswith("SKC"):
+        self.decoded_metar[key][self.DECODED_KEY].append("sky clear")
+        continue
+      elif layer.startswith("CLR"):
+        self.decoded_metar[key][self.DECODED_KEY].append( \
+          "no clouds below 12,000 feet")
+        continue
+
+      # Handle indefinite ceiling and change the prefix length to 2
+      elif layer.startswith("VV"):
+        decoded_layer += "vertical visibility (indefinite ceiling)"
+        layer_type_len = 2
+
+      # Handle 'standard' cases (FEW, SCT, BKN, OVC)
+      elif layer.startswith("FEW"):
+        decoded_layer += "few clouds"
+      elif layer.startswith("SCT"):
+        decoded_layer += "scattered clouds"
+      elif layer.startswith("BKN"):
+        decoded_layer += "broken clouds"
+      elif layer.startswith("OVC"):
+        decoded_layer += "overcast"
+
+      # Check for a cumulonimbus or towering cumulus modifier
+      is_cb = False
+      is_tcu = False
+      modifier_len = 0 # default
+      if layer.endswith("CB"):
+        is_cb = True
+        modifier_len = 2
+      if layer.endswith("TCU"):
+        is_tcu = True
+        modifier_len = 3
+
+      # Altitude (anything else)
+      altitude = layer[layer_type_len:len(layer)-modifier_len]
+
+      # Special case: "///" = cloud layer below station
+      if altitude == "///":
+        decoded_layer += " below reporting station elevation"
+      else:
+        altitude = altitude.lstrip("0")
+        try:
+          int_alt = int(altitude) * 100
+          localized_alt = self.localize_num(int_alt)
+          decoded_layer += " at %s feet" % localized_alt
+        except ValueError:
+          # TODO: couldn't convert altitude to an int, log or throw
+          pass
+
+      # Add on the cumulonimbus/towering cumulus modifiers
+      if is_cb:
+        decoded_layer += " (cumulonimbus)"
+      if is_tcu:
+        decoded_layer += " (towering cumulus)"
+
+      # Put it together...
+      self.decoded_metar[key][self.DECODED_KEY].append(decoded_layer)
 
   def decode_temp(self, val):
     pass
