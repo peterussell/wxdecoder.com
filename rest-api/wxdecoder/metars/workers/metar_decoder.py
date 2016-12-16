@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import json
 import locale
 
@@ -313,16 +315,42 @@ class MetarDecoder:
       self.decoded_metar[key][self.DECODED_KEY].append(decoded_layer)
 
   def decode_temp(self, val):
-    pass
+    key = "temp"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key][self.DECODED_KEY] = self.get_decoded_temp_str(val)
 
   def decode_dewpoint(self, val):
-    pass
+    key = "dewpoint"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key][self.DECODED_KEY] = self.get_decoded_temp_str(val)
+
+  # Shared decoder for temperature and dewpoint
+  def get_decoded_temp_str(self, val):
+    if val == "":
+      return "(missing)"
+
+    res = ""
+    if val.startswith("M"):
+      res += "minus "
+      val = val[1:]
+
+    val = val.lstrip("0")
+    degree_sign = u'\N{DEGREE SIGN}'
+    res += "%s%sC" % (val, degree_sign)
+    return res
 
   def decode_altimeter(self, val):
-    pass
+    key = "altimeter"
+    self.copy_orig_value(key, val)
+    val = val.lstrip("A")
+    self.decoded_metar[key][self.DECODED_KEY] = \
+      "%s.%s\"Hg" % (val[:2], val[2:])
 
   def decode_remarks(self, val):
-    pass
+    key = "remarks"
+    self.copy_orig_value(key, val)
+    # For now just copy the whole remarks section to the decoded field
+    self.decoded_metar[key][self.DECODED_KEY] = val
 
   def decode_tornadic_activity(self, val):
     pass

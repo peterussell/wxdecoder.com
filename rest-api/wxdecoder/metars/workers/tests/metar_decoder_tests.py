@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from nose import with_setup
 from nose.tools import assert_equals
 import json
@@ -312,3 +314,78 @@ class TestMetarController:
                         "few clouds at 3,200 feet",
                         "overcast at 10,000 feet (towering cumulus)"])
 
+  def test_decode_temp(self):
+    val = "10"
+    decoder = MetarDecoder()
+    decoder.decode_temp(val)
+    res = decoder.decoded_metar["temp"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "10%sC" % degree_sign)
+
+  def test_decode_temp_missing(self):
+    val = ""
+    decoder = MetarDecoder()
+    decoder.decode_temp(val)
+    res = decoder.decoded_metar["temp"][self.DECODED_KEY]
+    assert_equals(res, "(missing)")
+
+  def test_decode_temp_negative(self):
+    val = "M04"
+    decoder = MetarDecoder()
+    decoder.decode_temp(val)
+    res = decoder.decoded_metar["temp"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "minus 4%sC" % degree_sign)
+
+  def test_decode_temp_single_digit_degree_gets_leading_zero_stripped(self):
+    val = "09"
+    decoder = MetarDecoder()
+    decoder.decode_temp(val)
+    res = decoder.decoded_metar["temp"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "9%sC" % degree_sign)
+
+  def test_decode_dewpoint(self):
+    val = "10"
+    decoder = MetarDecoder()
+    decoder.decode_dewpoint(val)
+    res = decoder.decoded_metar["dewpoint"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "10%sC" % degree_sign)
+
+  def test_decode_dewpoint_missing(self):
+    val = ""
+    decoder = MetarDecoder()
+    decoder.decode_dewpoint(val)
+    res = decoder.decoded_metar["dewpoint"][self.DECODED_KEY]
+    assert_equals(res, "(missing)")
+
+  def test_decode_dewpoint_negative(self):
+    val = "M04"
+    decoder = MetarDecoder()
+    decoder.decode_dewpoint(val)
+    res = decoder.decoded_metar["dewpoint"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "minus 4%sC" % degree_sign)
+
+  def test_decode_dewpoint_single_digit_degree_gets_leading_zero_stripped(self):
+    val = "09"
+    decoder = MetarDecoder()
+    decoder.decode_dewpoint(val)
+    res = decoder.decoded_metar["dewpoint"][self.DECODED_KEY]
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "9%sC" % degree_sign)
+
+  def test_decode_altimeter(self):
+    val = "2992"
+    decoder = MetarDecoder()
+    decoder.decode_altimeter(val)
+    res = decoder.decoded_metar["altimeter"][self.DECODED_KEY]
+    assert_equals(res, "29.92\"Hg")
+
+  def test_decode_remarks_temp_test_remarks_get_copied_to_decoded_field(self):
+    val = "RMK AO2 SLP120 T10221044 10000 21022 55002"
+    decoder = MetarDecoder()
+    decoder.decode_remarks(val)
+    res = decoder.decoded_metar["remarks"][self.DECODED_KEY]
+    assert_equals(res, val)
