@@ -6,4 +6,4 @@ class MetarSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Metar
-    fields = ('id', 'raw_metar')
+    fields = ('id', 'raw_metar', 'decoded_metar')

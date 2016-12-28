@@ -8,6 +8,7 @@ class MetarDecoder:
   DECODED_KEY = "decoded"
 
   def decode_metar(self, json_metar):
+    print ">>> %s \n\n\n <<<" % json_metar
     self.decode_is_special_report(json_metar["is_special_report"])
     self.decode_icao_id(json_metar["icao_id"])
     self.decode_obs_datetime(json_metar["obs_datetime"])
@@ -42,7 +43,7 @@ class MetarDecoder:
     self.decode_sensor_status(json_metar["sensor_status"])
 
     # tmp
-    return json_metar
+    return self.decoded_metar
 
   def decode_is_special_report(self, val):
     key = "is_special_report"
@@ -199,7 +200,7 @@ class MetarDecoder:
     del self.decoded_metar[key][self.DECODED_KEY][:]
 
     # Load the mappings (METAR code -> plain English)
-    with open('data/wx-phenomena.json') as wxp:
+    with open('metars/workers/data/wx-phenomena.json') as wxp:
       mappings = json.load(wxp)["codes"]
 
     for full_token in val:
@@ -429,7 +430,12 @@ class MetarDecoder:
 
   def __init__(self):
     # Load defaults
-    with open('data/metar-decoded-defaults.json') as decoded_metar_file:
+
+    # tmp
+    import os
+    print ">>> %s " % os.getcwd()
+
+    with open('metars/workers/data/metar-decoded-defaults.json') as decoded_metar_file:
       contents = json.load(decoded_metar_file)
       self.decoded_metar = contents["metar"]
     locale.setlocale(locale.LC_ALL, 'en_US')
