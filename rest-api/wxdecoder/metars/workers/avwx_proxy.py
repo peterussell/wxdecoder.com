@@ -1,6 +1,6 @@
 import requests
 
-AVWX_ROOT_URL = 'https://avwx.rest/api/METAR/'
+AVWX_ROOT_URL = 'https://avwx.rest/api/metar/'
 
 class AVWXProxy:
 

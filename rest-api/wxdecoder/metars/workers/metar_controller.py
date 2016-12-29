@@ -8,6 +8,7 @@ class MetarController:
     # TODO: needs unit test
     json_metar = self.parse_raw_metar_to_json(raw_metar)
     json_decoded_metar = self.decode_json_metar(json_metar)
+    json_decoded_metar["raw_metar"] = raw_metar
     return json_decoded_metar
 
   def retrieve_and_decode_metar(self, airport_id):

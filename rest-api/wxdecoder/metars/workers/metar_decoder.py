@@ -8,7 +8,6 @@ class MetarDecoder:
   DECODED_KEY = "decoded"
 
   def decode_metar(self, json_metar):
-    print ">>> %s \n\n\n <<<" % json_metar
     self.decode_is_special_report(json_metar["is_special_report"])
     self.decode_icao_id(json_metar["icao_id"])
     self.decode_obs_datetime(json_metar["obs_datetime"])
