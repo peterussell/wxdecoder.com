@@ -14,8 +14,9 @@ class TestMetarController:
   def setup_class(cls):
     pass
 
+  # Tests get run from wxdecoder root directory
   def test_decode_metar(self):
-    with open('tests/data/khio-encoded.json') as data:
+    with open('metars/workers/tests/data/khio-encoded.json') as data:
       khio = json.load(data)
     decoder = MetarDecoder()
     decoder.decode_metar(khio["metar"])

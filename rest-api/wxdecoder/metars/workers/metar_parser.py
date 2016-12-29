@@ -128,7 +128,8 @@ class MetarParser:
        token.startswith('FEW') or \
        token.startswith('SCT') or \
        token.startswith('BKN') or \
-       token.startswith('OVC'):
+       token.startswith('OVC') or \
+       token.startswith('VV'):
       return True
     return False
 

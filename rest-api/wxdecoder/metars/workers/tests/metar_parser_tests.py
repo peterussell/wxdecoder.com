@@ -167,6 +167,13 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["wx_phenomena"], ['-RA', 'BR'])
     assert_equals(res, ['BKN015', 'OVC025'])
 
+  def test_parse_wx_phenomena_with_vert_vis_sky_cond(self):
+    parser = MetarParser()
+    tokens = 'FG VV002'.split()
+    res = parser.parse_wx_phenomena(tokens)
+    assert_equals(parser.parsed_metar["wx_phenomena"], ["FG"])
+    assert_equals(res, ['VV002'])
+
   def test_parse_wx_phenomena_missing(self):
     parser = MetarParser()
     tokens = 'FEW020 SCT150'.split()
@@ -187,6 +194,13 @@ class TestMetarParser:
     res = parser.parse_sky_condition(tokens)
     assert_equals(parser.parsed_metar["sky_condition"], [])
     assert_equals(res, ['06/04', 'A2990'])
+
+  def test_parse_sky_condition_vertical_visibility(self):
+    parser = MetarParser()
+    tokens = 'VV002 00/M01'.split()
+    res = parser.parse_sky_condition(tokens)
+    assert_equals(parser.parsed_metar["sky_condition"], ["VV002"])
+    assert_equals(res, ['00/M01'])
 
   def test_parse_tmp_dewpoint(self):
     parser = MetarParser()
