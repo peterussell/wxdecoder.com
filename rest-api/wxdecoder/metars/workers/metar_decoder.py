@@ -430,11 +430,7 @@ class MetarDecoder:
   def __init__(self):
     # Load defaults
 
-    # tmp
-    import os
-    print ">>> %s " % os.getcwd()
-
     with open('metars/workers/data/metar-decoded-defaults.json') as decoded_metar_file:
       contents = json.load(decoded_metar_file)
       self.decoded_metar = contents["metar"]
-    locale.setlocale(locale.LC_ALL, 'en_US')
+      locale.setlocale(locale.LC_ALL, '')
