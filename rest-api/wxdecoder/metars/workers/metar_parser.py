@@ -7,8 +7,8 @@ class MetarParser:
     return self.parse_tokens(tokens)
 
   def parse_tokens(self, tokens):
-    # Each parseor gets called in turn. If the next token of the METAR matches
-    # what that parseor expects, it parses the relevant section (or sections),
+    # Each parser gets called in turn. If the next token of the METAR matches
+    # what that parser expects, it parses the relevant section (or sections),
     # stores the parsed result in the relevant class field, strips the token(s)
     # from the METAR and returns the result
 
@@ -79,12 +79,8 @@ class MetarParser:
   def parse_wx_phenomena(self, tokens):
     wx_tokens = []
     for t in tokens:
-      # Loop until we get a sky condition token.
-      # Note: this will break if the sky condition is omitted (TODO, revisit).
-      # One solution would be implement 'is_wx_phenomena_token(token)', but that
-      # could be expensive given how many tokens there are; it's cheaper to
-      # check the much smaller sky condition list.
-      if not self.is_sky_condition_token(t):
+      # Loop until we run out of WX phenomena tokens
+      if self.is_wx_phenomena_token(t):
         wx_tokens.append(t)
       else:
         break
@@ -123,6 +119,19 @@ class MetarParser:
     return tokens
 
   ### Helpers - TODO: Move to utils module
+  def is_wx_phenomena_token(self, token):
+    if (token.startswith('-') or \
+        token.startswith('+') or \
+        token.startswith('VC')):
+      return True
+    WX_PHENOMENA = ['DZ','RA','SN','SG','IC','PE','GR','GS',
+                    'BR','FG','FU','VA','DU','SA','HZ','PY',
+                    'PO','SQ','FC','SS','DS']
+    for wxp in WX_PHENOMENA:
+      if wxp in token:
+        return True
+    return False
+
   def is_sky_condition_token(self, token):
     if token.startswith('CLR') or \
        token.startswith('FEW') or \

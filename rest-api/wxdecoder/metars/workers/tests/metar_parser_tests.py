@@ -9,7 +9,7 @@ class TestMetarParser:
   def setup_class(cls):
     pass
 
-  ### Test full token parseor
+  ### Test full token parser
   def test_parse_metar_khio(self):
     metar = 'METAR KHIO 290653Z AUTO 00000KT 10SM FEW032 OVC041 06/05 ' \
             'A3017 RMK AO2 RAB35E44 SLP219 P0000 T00560050'
@@ -27,6 +27,15 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["dewpoint"], '05')
     assert_equals(parser.parsed_metar["altimeter"], '3017')
     assert_equals(parser.parsed_metar["remarks"], 'RMK AO2 RAB35E44 SLP219 P0000 T00560050')
+
+  def test_parse_metar_without_sky_cond_token(self):
+    metar = 'METAR KCVO 010755Z 17007KT 10SM 05/03 A3041 RMK AO1'
+    parser = MetarParser()
+    res = parser.parse_tokens(metar.split())
+    assert_equals(parser.parsed_metar["vis"], '10SM')
+    assert_equals(parser.parsed_metar["sky_condition"], [])
+    assert_equals(parser.parsed_metar["temp"], '05')
+    assert_equals(parser.parsed_metar["dewpoint"], '03')
 
   ### Test Individual Token Processors
   def test_parse_metar_header_with_metar_header(self):
