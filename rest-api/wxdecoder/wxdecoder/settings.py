@@ -34,7 +34,7 @@ STATICFILES_DIRS = (
 SECRET_KEY = 'z=umgk2rf!70x^ygboef)+q2-gl%&3hob)xyrp5^(zky_48g_5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -49,7 +49,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'metars.apps.MetarsConfig',
+]
+
+MIDDLEWARE_CLASSES = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +67,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'wxdecoder.urls'
 
