@@ -384,9 +384,10 @@ class TestMetarController:
     res = decoder.decoded_metar["altimeter"][self.DECODED_KEY]
     assert_equals(res, "29.92\"Hg")
 
-  def test_decode_remarks_temp_test_remarks_get_copied_to_decoded_field(self):
-    val = "RMK AO2 SLP120 T10221044 10000 21022 55002"
-    decoder = MetarDecoder()
-    decoder.decode_remarks(val)
-    res = decoder.decoded_metar["remarks"][self.DECODED_KEY]
-    assert_equals(res, val)
+  # TODO: delete this when remarks decoding is running
+#  def test_decode_remarks_temp_test_remarks_get_copied_to_decoded_field(self):
+#    val = "RMK AO2 SLP120 T10221044 10000 21022 55002"
+#    decoder = MetarDecoder()
+#    decoder.decode_remarks(val)
+#    res = decoder.decoded_metar["remarks"][self.DECODED_KEY]
+#    assert_equals(res, val)

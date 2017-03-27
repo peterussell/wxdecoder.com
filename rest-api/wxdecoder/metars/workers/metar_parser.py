@@ -26,9 +26,10 @@ class MetarParser:
     tokens = self.parse_sky_condition(tokens)
     tokens = self.parse_temp_dewpoint(tokens)
     tokens = self.parse_altimeter(tokens)
+    tokens = self.parse_remarks(tokens)
 
     # Store any remaining tokens as remarks (for now)
-    self.parsed_metar["remarks"] = ' '.join(tokens)
+    self.parsed_metar["misc"] = ' '.join(tokens)
 
     # Return any remaining tokens
     return self.parsed_metar
@@ -117,6 +118,16 @@ class MetarParser:
       tok = tokens.pop(0)
       self.parsed_metar["altimeter"] = tok.replace('A', '')
     return tokens
+
+  def parse_remarks(self, tokens):
+    if 'RMK' not in tokens:
+      return tokens
+    # Consider anything from "RMK" to the end to be a Remark
+    rmk_index = tokens.index('RMK')
+    self.parsed_metar["remarks"] = ' '.join(tokens[rmk_index+1:])
+    # If we had any tokens before "RMK" they're uknown, so return them
+    # for the caller to deal with.
+    return tokens[:rmk_index]
 
   ### Helpers - TODO: Move to utils module
   def is_wx_phenomena_token(self, token):

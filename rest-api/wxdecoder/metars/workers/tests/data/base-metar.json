@@ -32,6 +32,7 @@
     "twenty_four_hour_precip": [],
     "pressure_tendency": "",
     "sensor_status": [],
-    "maint_reqd": ""
+    "maint_reqd": "",
+    "misc": ""
   }
 }

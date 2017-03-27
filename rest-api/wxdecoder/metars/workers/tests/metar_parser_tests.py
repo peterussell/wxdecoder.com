@@ -26,7 +26,8 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["temp"], '06')
     assert_equals(parser.parsed_metar["dewpoint"], '05')
     assert_equals(parser.parsed_metar["altimeter"], '3017')
-    assert_equals(parser.parsed_metar["remarks"], 'RMK AO2 RAB35E44 SLP219 P0000 T00560050')
+    assert_equals(parser.parsed_metar["remarks"], 'AO2 RAB35E44 SLP219 P0000 T00560050')
+    assert_equals(parser.parsed_metar["misc"], '')
 
   def test_parse_metar_without_sky_cond_token(self):
     metar = 'METAR KCVO 010755Z 17007KT 10SM 05/03 A3041 RMK AO1'
@@ -240,6 +241,33 @@ class TestMetarParser:
     res = parser.parse_altimeter(tokens)
     assert_equals(parser.parsed_metar["altimeter"], '')
     assert_equals(res, ['RMK', 'TORNADO'])
+
+  def test_parse_remarks(self):
+    parser = MetarParser()
+    tokens = 'RMK A02 PK WND 20032/25 WSHFT 1715'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["remarks"], 'A02 PK WND 20032/25 WSHFT 1715')
+
+  def test_remarks_missing(self):
+    parser = MetarParser()
+    tokens = 'A2990'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["remarks"], '')
+    assert_equals(res, ['A2990'])
+
+  def test_remarks_id_present_but_remarks_missing(self):
+    parser = MetarParser()
+    tokens = 'A2990 RMK'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["remarks"], '')
+    assert_equals(res, ['A2990']) # Expect the parser to remove 'RMK'
+
+  def test_remarks_ignores_unknown_preceding_tokens(self):
+    parser = MetarParser()
+    tokens = 'A2990 RANDTOK MISC RMK A02 PK WND 20032/25'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["remarks"], 'A02 PK WND 20032/25')
+    assert_equals(res, ['A2990', 'RANDTOK', 'MISC'])
 
   @classmethod
   def teardown_class(cls):
