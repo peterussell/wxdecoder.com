@@ -122,12 +122,66 @@ class MetarParser:
   def parse_remarks(self, tokens):
     if 'RMK' not in tokens:
       return tokens
-    # Consider anything from "RMK" to the end to be a Remark
+
+    # Ignore any tokens before RMK
     rmk_index = tokens.index('RMK')
-    self.parsed_metar["remarks"] = ' '.join(tokens[rmk_index+1:])
-    # If we had any tokens before "RMK" they're uknown, so return them
-    # for the caller to deal with.
+    rmk_tokens = tokens[rmk_index+1:]
+
+    processed_tokens = []
+    for rt in rmk_tokens:
+      if rt == 'RMK':
+        processed_tokens.append(rt)
+      # Station type
+      if rt.startswith('A0'):
+        processed_tokens.append(self.parse_rmk_stn_type(rt))
+      # Peak wind
+      if rt == 'PK':
+        processed_tokens.extend(
+          self.parse_rmk_peak_wind(rmk_tokens, rmk_tokens.index(rt)))
+      # Wind shift
+      if rt == 'WSHFT':
+        processed_tokens.extend(
+          self.parse_rmk_wind_shift(rmk_tokens, rmk_tokens.index(rt)))
+      # Pressure - rapid rise or fall
+      if rt.startswith('PRES'):
+        processed_tokens.append(self.parse_rmk_pressure_rise_fall_rapid(rt))
+
+    unprocessed_tokens = [ t for t in rmk_tokens if t not in processed_tokens ]
+
+    # Result:
+    #  -> Any remarks we could process are copied to their respective fields and
+    #     removed from parsed_metar["remarks"].
+    #  -> parsed_metar["remarks"] contains any tokens after RMK we couldn't process.
+    #  -> Return any tokens preceding RMK, we don't know what they are.
+    self.parsed_metar["remarks"] = ' '.join(unprocessed_tokens)
     return tokens[:rmk_index]
+
+  ### Remarks Parser Helpers
+  def parse_rmk_stn_type(self, token):
+    if token == 'A01' or token == 'A02':
+      self.parsed_metar["stn_type"] = token
+      return token
+
+  def parse_rmk_peak_wind(self, tokens, start_index):
+    if tokens[start_index] == 'PK' and tokens[start_index+1] == 'WND':
+      # Expect three tokens: 'PK', 'WND', and the value
+      pk_wnd_toks = tokens[start_index:start_index+3]
+      self.parsed_metar["peak_wind"] = ' '.join(pk_wnd_toks)
+      return pk_wnd_toks
+
+  def parse_rmk_wind_shift(self, tokens, start_index):
+    # Format: WSHFT <time> [FROPA]
+    ws_tokens = tokens[start_index:start_index+2]
+    if start_index+2 < len(tokens) and tokens[start_index+2] == 'FROPA':
+      ws_tokens.append('FROPA')
+    self.parsed_metar["wind_shift"] = ' '.join(ws_tokens)
+    print ws_tokens
+    return ws_tokens
+
+  def parse_rmk_pressure_rise_fall_rapid(self, token):
+    if token == 'PRESRR' or token == 'PRESFR':
+      self.parsed_metar["pressure_rise_fall_rapid"] = token
+      return token
 
   ### Helpers - TODO: Move to utils module
   def is_wx_phenomena_token(self, token):

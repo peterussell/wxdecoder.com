@@ -244,9 +244,9 @@ class TestMetarParser:
 
   def test_parse_remarks(self):
     parser = MetarParser()
-    tokens = 'RMK A02 PK WND 20032/25 WSHFT 1715'.split()
+    tokens = 'RMK A02 PK WND 20032/25 WSHFT 1715 MISC REMARK'.split()
     res = parser.parse_remarks(tokens)
-    assert_equals(parser.parsed_metar["remarks"], 'A02 PK WND 20032/25 WSHFT 1715')
+    assert_equals(parser.parsed_metar["remarks"], 'MISC REMARK')
 
   def test_remarks_missing(self):
     parser = MetarParser()
@@ -264,10 +264,99 @@ class TestMetarParser:
 
   def test_remarks_ignores_unknown_preceding_tokens(self):
     parser = MetarParser()
-    tokens = 'A2990 RANDTOK MISC RMK A02 PK WND 20032/25'.split()
+    tokens = 'A2990 RANDTOK MISC RMK A02 PK WND 20032/25 MISC ITEM'.split()
     res = parser.parse_remarks(tokens)
-    assert_equals(parser.parsed_metar["remarks"], 'A02 PK WND 20032/25')
+    assert_equals(parser.parsed_metar["remarks"], 'MISC ITEM')
     assert_equals(res, ['A2990', 'RANDTOK', 'MISC'])
+
+  def test_parse_rmk_stn_type(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_stn_type("A01")
+    assert_equals(parser.parsed_metar["stn_type"], "A01")
+    res = parser.parse_rmk_stn_type("A02")
+    assert_equals(parser.parsed_metar["stn_type"], "A02")
+
+  def test_parse_rmk_stn_type_with_garbage(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_stn_type("asdf")
+    assert_equals(parser.parsed_metar["stn_type"], "")
+
+  def test_parse_remarks_with_stn_type(self):
+    parser = MetarParser()
+    tokens = 'RMK A02'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["stn_type"], 'A02')
+    assert_equals(parser.parsed_metar["remarks"], '')
+
+  def test_parse_rmk_peak_wind(self):
+    parser = MetarParser()
+    tokens = 'PK WND 20032/25 WSHFT 1715'.split()
+    res = parser.parse_rmk_peak_wind(tokens, tokens.index('PK'))
+    assert_equals(parser.parsed_metar["peak_wind"], 'PK WND 20032/25')
+    assert_equals(res, ['PK', 'WND', '20032/25']) # Should return processed tokens
+
+  def test_parse_remarks_with_peak_wind(self):
+    parser = MetarParser()
+    tokens = 'RMK PK WND 20032/25 WSHFT 1715'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["peak_wind"], 'PK WND 20032/25')
+
+  def test_parse_rmk_wind_shift_without_frontal_passage(self):
+    parser = MetarParser()
+    tokens = 'WSHFT 1715'.split()
+    res = parser.parse_rmk_wind_shift(tokens, tokens.index('WSHFT'))
+    assert_equals(parser.parsed_metar["wind_shift"], 'WSHFT 1715')
+    assert_equals(res, ['WSHFT', '1715'])
+
+  def test_parse_rmk_wind_shift_with_frontal_passage(self):
+    parser = MetarParser()
+    tokens = 'WSHFT 1715 FROPA'.split()
+    res = parser.parse_rmk_wind_shift(tokens, tokens.index('WSHFT'))
+    assert_equals(parser.parsed_metar["wind_shift"], 'WSHFT 1715 FROPA')
+    assert_equals(res, ['WSHFT', '1715', 'FROPA'])
+
+  def test_parse_remarks_with_wind_shift_without_frontal_passage(self):
+    parser = MetarParser()
+    tokens = 'RMK PK WND 20032/25 WSHFT 1715'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["wind_shift"], 'WSHFT 1715')
+
+  def test_parse_remarks_with_wind_shift_with_frontal_passage(self):
+    parser = MetarParser()
+    tokens = 'RMK PK WND 20032/25 WSHFT 1715 FROPA'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["wind_shift"], 'WSHFT 1715 FROPA')
+
+  def test_parse_rmk_pressure_rise_rapid(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_pressure_rise_fall_rapid('PRESRR')
+    assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], 'PRESRR')
+    assert_equals(res, 'PRESRR')
+
+  def test_parse_rmk_pressure_fall_rapid(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_pressure_rise_fall_rapid('PRESFR')
+    assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], 'PRESFR')
+    assert_equals(res, 'PRESFR')
+
+  def test_parse_remarks_with_pressure_rise_rapid(self):
+    parser = MetarParser()
+    tokens = 'RMK WSHFT 1715 PRESRR'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], 'PRESRR')
+
+  def test_parse_remarks_with_pressure_fall_rapid(self):
+    parser = MetarParser()
+    tokens = 'RMK WSHFT 1715 PRESFR'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], 'PRESFR')
+
+  def test_parse_remarks_invalid_token_similar_to_pressure_rise_fall_rapid_isnt_parsed(self):
+    parser = MetarParser()
+    tokens = 'RMK WSHFT 1715 PRESasdf'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], '')
+    assert_equals(parser.parsed_metar["remarks"], 'PRESasdf')
 
   @classmethod
   def teardown_class(cls):
