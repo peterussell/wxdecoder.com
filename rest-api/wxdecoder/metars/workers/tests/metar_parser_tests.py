@@ -26,8 +26,9 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["temp"], '06')
     assert_equals(parser.parsed_metar["dewpoint"], '05')
     assert_equals(parser.parsed_metar["altimeter"], '3017')
+    assert_equals(parser.parsed_metar["stn_type"], 'AO2')
     assert_equals(parser.parsed_metar["sea_level_pressure"], 'SLP219')
-    assert_equals(parser.parsed_metar["remarks"], 'AO2 RAB35E44 P0000 T00560050')
+    assert_equals(parser.parsed_metar["remarks"], 'RAB35E44 P0000 T00560050')
     assert_equals(parser.parsed_metar["misc"], '')
 
   def test_parse_metar_without_sky_cond_token(self):
@@ -245,7 +246,7 @@ class TestMetarParser:
 
   def test_parse_remarks(self):
     parser = MetarParser()
-    tokens = 'RMK A02 PK WND 20032/25 WSHFT 1715 MISC REMARK'.split()
+    tokens = 'RMK AO2 PK WND 20032/25 WSHFT 1715 MISC REMARK'.split()
     res = parser.parse_remarks(tokens)
     assert_equals(parser.parsed_metar["remarks"], 'MISC REMARK')
 
@@ -265,17 +266,17 @@ class TestMetarParser:
 
   def test_remarks_ignores_unknown_preceding_tokens(self):
     parser = MetarParser()
-    tokens = 'A2990 RANDTOK MISC RMK A02 PK WND 20032/25 MISC ITEM'.split()
+    tokens = 'A2990 RANDTOK MISC RMK AO2 PK WND 20032/25 MISC ITEM'.split()
     res = parser.parse_remarks(tokens)
     assert_equals(parser.parsed_metar["remarks"], 'MISC ITEM')
     assert_equals(res, ['A2990', 'RANDTOK', 'MISC'])
 
   def test_parse_rmk_stn_type(self):
     parser = MetarParser()
-    res = parser.parse_rmk_stn_type("A01")
-    assert_equals(parser.parsed_metar["stn_type"], "A01")
-    res = parser.parse_rmk_stn_type("A02")
-    assert_equals(parser.parsed_metar["stn_type"], "A02")
+    res = parser.parse_rmk_stn_type("AO1")
+    assert_equals(parser.parsed_metar["stn_type"], "AO1")
+    res = parser.parse_rmk_stn_type("AO2")
+    assert_equals(parser.parsed_metar["stn_type"], "AO2")
 
   def test_parse_rmk_stn_type_with_garbage(self):
     parser = MetarParser()
@@ -284,9 +285,9 @@ class TestMetarParser:
 
   def test_parse_remarks_with_stn_type(self):
     parser = MetarParser()
-    tokens = 'RMK A02'.split()
+    tokens = 'RMK AO2'.split()
     res = parser.parse_remarks(tokens)
-    assert_equals(parser.parsed_metar["stn_type"], 'A02')
+    assert_equals(parser.parsed_metar["stn_type"], 'AO2')
     assert_equals(parser.parsed_metar["remarks"], '')
 
   def test_parse_rmk_peak_wind(self):
@@ -377,7 +378,7 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["maint_reqd"], True)
     assert_equals(res, '$')
 
-  def test_parse_remarks_with_main_reqd(self):
+  def test_parse_remarks_with_maint_reqd(self):
     parser = MetarParser()
     tokens = 'RMK WSHFT 1715 PRESFR SLP125 $'.split()
     res = parser.parse_remarks(tokens)

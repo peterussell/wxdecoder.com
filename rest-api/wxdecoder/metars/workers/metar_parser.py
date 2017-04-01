@@ -132,7 +132,7 @@ class MetarParser:
       if rt == 'RMK':
         processed_tokens.append(rt)
       # Station type
-      if rt.startswith('A0'):
+      if rt.startswith('AO'):
         processed_tokens.append(self.parse_rmk_stn_type(rt))
       # Peak wind
       if rt == 'PK':
@@ -164,7 +164,7 @@ class MetarParser:
 
   ### Remarks Parser Helpers
   def parse_rmk_stn_type(self, token):
-    if token == 'A01' or token == 'A02':
+    if token == 'AO1' or token == 'AO2':
       self.parsed_metar["stn_type"] = token
       return token
 

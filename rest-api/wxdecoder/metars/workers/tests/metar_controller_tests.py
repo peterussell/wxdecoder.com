@@ -27,8 +27,9 @@ class TestMetarController:
     assert_equals(res['temp'], "06")
     assert_equals(res['dewpoint'], "05")
     assert_equals(res['altimeter'], "3017")
+    assert_equals(res['stn_type'], "AO2")
     assert_equals(res['sea_level_pressure'], "SLP219")
-    assert_equals(res['remarks'], "AO2 RAB35E44 P0000 T00560050")
+    assert_equals(res['remarks'], "RAB35E44 P0000 T00560050")
     assert_equals(res['misc'], "")
 
   ### Tests KHIO, 24-Dec-16 with low vis. Found a bug with METAR parser
@@ -51,6 +52,27 @@ class TestMetarController:
     assert_equals(res['temp'], "00")
     assert_equals(res['dewpoint'], "M01")
     assert_equals(res['altimeter'], "2996")
+    assert_equals(res['stn_type'], "AO2")
     assert_equals(res['sea_level_pressure'], "SLP150")
-    assert_equals(res['remarks'], "AO2 T00001006")
+    assert_equals(res['remarks'], "T00001006")
     assert_equals(res['misc'], '')
+
+  def test_parse_raw_metar_to_json_khio_31_mar_17(self):
+    metar = 'KHIO 010053Z 00000KT 10SM CLR 14/06 A3026 RMK AO2 SLP247 T01440056'
+    controller = MetarController()
+    res = controller.parse_raw_metar_to_json(metar)
+    assert_equals(res['is_special_report'], False)
+    assert_equals(res['icao_id'], "KHIO")
+    assert_equals(res['obs_datetime'], "010053Z")
+    assert_equals(res['mod_auto'], False)
+    assert_equals(res['wind_dir_speed'], "00000KT")
+    assert_equals(res['wind_dir_variation'], "")
+    assert_equals(res['vis'], "10SM")
+    assert_equals(res['sky_condition'], ["CLR"])
+    assert_equals(res['temp'], "14")
+    assert_equals(res['dewpoint'], "06")
+    assert_equals(res['altimeter'], "3026")
+    assert_equals(res['sea_level_pressure'], "SLP247")
+    assert_equals(res['remarks'], "T01440056")
+    assert_equals(res['misc'], '')
+

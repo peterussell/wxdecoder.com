@@ -356,10 +356,14 @@ class MetarDecoder:
     pass
 
   def decode_stn_type(self, val):
-    pass
+    key = "stn_type"
+    self.copy_orig_value(key, val)
+    # TODO: decoder
 
   def decode_peak_wind(self, val):
-    pass
+    key = "peak_wind"
+    self.copy_orig_value(key, val)
+    # TODO: decoder
 
   def decode_wind_shift(self, val):
     pass
@@ -386,10 +390,14 @@ class MetarDecoder:
     pass
 
   def decode_pressure_rise_fall_rapid(self, val):
-    pass
+    key = "pressure_rise_fall_rapid"
+    self.copy_orig_value(key, val)
+    # TODO: decoder
 
   def decode_sea_level_pressure(self, val):
-    pass
+    key = "sea_level_pressure"
+    self.copy_orig_value(key, val)
+    # TODO: decoder
 
   def decode_hourly_precip(self, val):
     pass
@@ -407,7 +415,9 @@ class MetarDecoder:
     pass
 
   def decode_maint_reqd(self, val):
-    pass
+    key = "maint_reqd"
+    self.copy_orig_val(key, val)
+    # TODO
 
   ## Helpers
   def copy_orig_value(self, key, value):
