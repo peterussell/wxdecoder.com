@@ -26,7 +26,8 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["temp"], '06')
     assert_equals(parser.parsed_metar["dewpoint"], '05')
     assert_equals(parser.parsed_metar["altimeter"], '3017')
-    assert_equals(parser.parsed_metar["remarks"], 'AO2 RAB35E44 SLP219 P0000 T00560050')
+    assert_equals(parser.parsed_metar["sea_level_pressure"], 'SLP219')
+    assert_equals(parser.parsed_metar["remarks"], 'AO2 RAB35E44 P0000 T00560050')
     assert_equals(parser.parsed_metar["misc"], '')
 
   def test_parse_metar_without_sky_cond_token(self):
@@ -357,6 +358,30 @@ class TestMetarParser:
     res = parser.parse_remarks(tokens)
     assert_equals(parser.parsed_metar["pressure_rise_fall_rapid"], '')
     assert_equals(parser.parsed_metar["remarks"], 'PRESasdf')
+
+  def test_parse_rmk_sea_level_pressure(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_sea_level_pressure('SLP125')
+    assert_equals(parser.parsed_metar["sea_level_pressure"], 'SLP125')
+    assert_equals(res, 'SLP125')
+
+  def test_parse_remarks_with_sea_level_pressure(self):
+    parser = MetarParser()
+    tokens = 'RMK WSHFT 1715 PRESFR SLP125'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["sea_level_pressure"], 'SLP125')
+
+  def test_parse_rmk_maint_reqd(self):
+    parser = MetarParser()
+    res = parser.parse_rmk_maint_reqd('$')
+    assert_equals(parser.parsed_metar["maint_reqd"], True)
+    assert_equals(res, '$')
+
+  def test_parse_remarks_with_main_reqd(self):
+    parser = MetarParser()
+    tokens = 'RMK WSHFT 1715 PRESFR SLP125 $'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["maint_reqd"], True)
 
   @classmethod
   def teardown_class(cls):

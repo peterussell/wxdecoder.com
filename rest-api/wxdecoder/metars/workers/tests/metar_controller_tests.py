@@ -27,7 +27,8 @@ class TestMetarController:
     assert_equals(res['temp'], "06")
     assert_equals(res['dewpoint'], "05")
     assert_equals(res['altimeter'], "3017")
-    assert_equals(res['remarks'], "AO2 RAB35E44 SLP219 P0000 T00560050")
+    assert_equals(res['sea_level_pressure'], "SLP219")
+    assert_equals(res['remarks'], "AO2 RAB35E44 P0000 T00560050")
     assert_equals(res['misc'], "")
 
   ### Tests KHIO, 24-Dec-16 with low vis. Found a bug with METAR parser
@@ -50,5 +51,6 @@ class TestMetarController:
     assert_equals(res['temp'], "00")
     assert_equals(res['dewpoint'], "M01")
     assert_equals(res['altimeter'], "2996")
-    assert_equals(res['remarks'], "AO2 SLP150 T00001006")
+    assert_equals(res['sea_level_pressure'], "SLP150")
+    assert_equals(res['remarks'], "AO2 T00001006")
     assert_equals(res['misc'], '')

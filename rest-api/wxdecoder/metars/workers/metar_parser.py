@@ -145,6 +145,12 @@ class MetarParser:
       # Pressure - rapid rise or fall
       if rt.startswith('PRES'):
         processed_tokens.append(self.parse_rmk_pressure_rise_fall_rapid(rt))
+      # Sea level pressure
+      if rt.startswith('SLP'):
+        processed_tokens.append(self.parse_rmk_sea_level_pressure(rt))
+      # Maintenance required
+      if rt == '$':
+        processed_tokens.append(self.parse_rmk_maint_reqd(rt))
 
     unprocessed_tokens = [ t for t in rmk_tokens if t not in processed_tokens ]
 
@@ -181,6 +187,16 @@ class MetarParser:
   def parse_rmk_pressure_rise_fall_rapid(self, token):
     if token == 'PRESRR' or token == 'PRESFR':
       self.parsed_metar["pressure_rise_fall_rapid"] = token
+      return token
+
+  def parse_rmk_sea_level_pressure(self, token):
+    if token.startswith('SLP'):
+      self.parsed_metar["sea_level_pressure"] = token
+      return token
+
+  def parse_rmk_maint_reqd(self, token):
+    if token == '$':
+      self.parsed_metar["maint_reqd"] = True
       return token
 
   ### Helpers - TODO: Move to utils module
