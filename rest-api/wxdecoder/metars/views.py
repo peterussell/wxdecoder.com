@@ -11,7 +11,7 @@ class DecodeMetar(APIView):
   """
   Decodes METAR text submitted with the request and returns the decoded METAR.
   """
-  def get(self, request, format=None):
+  def post(self, request, format=None):
     controller = MetarController()
     try:
       decoded = controller.decode_metar(request.data['raw_metar'])
