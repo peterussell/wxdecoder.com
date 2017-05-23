@@ -358,7 +358,16 @@ class MetarDecoder:
   def decode_stn_type(self, val):
     key = "stn_type"
     self.copy_orig_value(key, val)
-    # TODO: decoder
+    if val == "AO1":
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "automated station with no precipitation sensor"
+    elif val == "AO2":
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "automated station with precipitation sensor"
+    else:
+      # TODO: we should log any unknown station types
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "unknown station type '" + val + "'"
 
   def decode_peak_wind(self, val):
     key = "peak_wind"
@@ -395,9 +404,34 @@ class MetarDecoder:
     # TODO: decoder
 
   def decode_sea_level_pressure(self, val):
+    # NB. A 'normal' range for SLP values is 950-1049 hPa, but the
+    # encoded version only specifies the tens, units, and tenths of
+    # units, so we need to determine whether the value is greater or
+    # less than 1,000 hPa and prepend the additional numbers.
+    # Based on the 'normal' range we'll assume any encoded value
+    # >= 50 is in the 900-range, and anything < 50 is in the
+    # 1000-range.
+    # More information at...
+    # http://www.wingsbywerntz.com/520-metar-slp-sea-level-pressure
     key = "sea_level_pressure"
     self.copy_orig_value(key, val)
-    # TODO: decoder
+
+    # No sea level pressure
+    if val == "SLPNO":
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "sea level pressure unavailable"
+
+    elif val.startswith("SLP"):
+      hpa = float(val[len("SLP"):]) / 10
+
+      # Add appropriate hPa hundreds/thousands
+      if hpa < 50:
+        hpa += 1000
+      else:
+        hpa += 900
+
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "sea level pressure is %s hPa" % self.localize_num(hpa, "%.1f")
 
   def decode_hourly_precip(self, val):
     pass
@@ -434,8 +468,8 @@ class MetarDecoder:
     except ValueError:
       return default_res
 
-  def localize_num(self, val):
-    return locale.format("%d", int(val), grouping=True)
+  def localize_num(self, val, format_specifier="%d"):
+    return locale.format(format_specifier, float(val), grouping=True)
 
   def __init__(self):
     # Load defaults

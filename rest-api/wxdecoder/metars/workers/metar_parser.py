@@ -12,7 +12,7 @@ class MetarParser:
     # stores the parsed result in the relevant class field, strips the token(s)
     # from the METAR and returns the result
 
-    # If the token doesn't match what it each parseor expects we can assume
+    # If the token doesn't match what each parser expects we can assume
     # it's been omitted from the METAR and return immediately.
     tokens = self.parse_metar_header(tokens)
     tokens = self.parse_icao_id(tokens)

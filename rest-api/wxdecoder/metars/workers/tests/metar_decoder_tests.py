@@ -384,6 +384,72 @@ class TestMetarController:
     res = decoder.decoded_metar["altimeter"][self.DECODED_KEY]
     assert_equals(res, "29.92\"Hg")
 
+  def test_decode_stn_type_ao1(self):
+    val = "AO1"
+    decoder = MetarDecoder()
+    decoder.decode_stn_type(val)
+    res = decoder.decoded_metar["stn_type"][self.DECODED_KEY]
+    assert_equals(res, "automated station with no precipitation sensor")
+
+  def test_decode_stn_type_ao2(self):
+    val = "AO2"
+    decoder = MetarDecoder()
+    decoder.decode_stn_type(val)
+    res = decoder.decoded_metar["stn_type"][self.DECODED_KEY]
+    assert_equals(res, "automated station with precipitation sensor")
+
+  def test_decode_stn_type_unknown(self):
+    val = "thesearenotthestationsyourelookingfor"
+    decoder = MetarDecoder()
+    decoder.decode_stn_type(val)
+    res = decoder.decoded_metar["stn_type"][self.DECODED_KEY]
+    assert_equals(res, "unknown station type '" + val + "'")
+
+  # NB. SLP values are kind of funky, for more info see metar_decoder.py
+  def test_decode_sea_level_pressure_greater_than_50(self):
+    val = "SLP834"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "sea level pressure is 983.4 hPa")
+
+  def test_decode_sea_level_pressure_less_than_50(self):
+    val = "SLP196"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "sea level pressure is 1,019.6 hPa")
+
+  def test_decode_sea_level_pressure_is_50(self):
+    # SLP >= 50 should have 900 hPa added
+    val = "SLP500"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "sea level pressure is 950.0 hPa")
+
+  def test_decode_sea_level_pressure_less_49_point_9(self):
+    # Edge case for SLP < 50 should have 1,000 hPa added
+    val = "SLP499"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "sea level pressure is 1,049.9 hPa")
+
+  def test_decode_sea_level_pressure_is_garbarge(self):
+    val = "noSLPforyou"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "")
+
+  def test_decode_no_sea_level_pressure(self):
+    val = "SLPNO"
+    decoder = MetarDecoder()
+    decoder.decode_sea_level_pressure(val)
+    res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
+    assert_equals(res, "sea level pressure unavailable")
+
   # TODO: delete this when remarks decoding is running
 #  def test_decode_remarks_temp_test_remarks_get_copied_to_decoded_field(self):
 #    val = "RMK AO2 SLP120 T10221044 10000 21022 55002"
