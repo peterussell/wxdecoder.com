@@ -356,8 +356,12 @@ class MetarDecoder:
     pass
 
   def decode_stn_type(self, val):
+    if val == "":
+      return
+
     key = "stn_type"
     self.copy_orig_value(key, val)
+
     if val == "AO1":
       self.decoded_metar[key][self.DECODED_KEY] = \
         "automated station with no precipitation sensor"
