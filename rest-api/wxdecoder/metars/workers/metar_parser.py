@@ -149,8 +149,14 @@ class MetarParser:
       if rt.startswith('SLP'):
         processed_tokens.append(self.parse_rmk_sea_level_pressure(rt))
       # Hourly temperature and dewpoint
-      if rt.startswith('T') and unicode(rt[1:], 'utf-8').isnumeric():
-        processed_tokens.append(self.parse_rmk_hourly_temp_dewpoint(rt))
+      if rt.startswith('T'): #
+        try:
+          # Check the rest of the value is a number so we don't confuse it with
+          # other RMK tokens that also start with 'T', eg. 'TSNO'
+          int(rt[1:])
+          processed_tokens.append(self.parse_rmk_hourly_temp_dewpoint(rt))
+        except ValueError:
+          pass # Not an int
       # Maintenance required
       if rt == '$':
         processed_tokens.append(self.parse_rmk_maint_reqd(rt))
