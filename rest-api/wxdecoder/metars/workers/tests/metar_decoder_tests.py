@@ -509,3 +509,10 @@ class TestMetarController:
     assert_equals(res, "hourly temperature is -11.1%sC, " \
                        "hourly dewpoint is -11.1%sC" % \
                        (degree_sign, degree_sign))
+
+  def test_decode_hourly_temp_dewpoint_missing(self):
+    val = ""
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, "")

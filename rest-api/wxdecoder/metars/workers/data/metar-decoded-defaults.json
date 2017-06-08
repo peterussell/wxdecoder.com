@@ -274,8 +274,8 @@
       }
     },
     "hourly_temp_dewpoint": {
-      "orig": [],
-      "decoded": [],
+      "orig": "",
+      "decoded": "",
       "description": {
         "general": "",
         "this_metar": "",
