@@ -28,7 +28,8 @@ class TestMetarParser:
     assert_equals(parser.parsed_metar["altimeter"], '3017')
     assert_equals(parser.parsed_metar["stn_type"], 'AO2')
     assert_equals(parser.parsed_metar["sea_level_pressure"], 'SLP219')
-    assert_equals(parser.parsed_metar["remarks"], 'RAB35E44 P0000 T00560050')
+    assert_equals(parser.parsed_metar["hourly_temp_dewpoint"], 'T00560050')
+    assert_equals(parser.parsed_metar["remarks"], 'RAB35E44 P0000')
     assert_equals(parser.parsed_metar["misc"], '')
 
   def test_parse_metar_without_sky_cond_token(self):
@@ -383,6 +384,12 @@ class TestMetarParser:
     tokens = 'RMK WSHFT 1715 PRESFR SLP125 $'.split()
     res = parser.parse_remarks(tokens)
     assert_equals(parser.parsed_metar["maint_reqd"], True)
+
+  def test_parse_remarks_hourly_temp_dewpoint(self):
+    parser = MetarParser()
+    tokens = 'RMK AO2 SLP062 T02000106 $'.split()
+    res = parser.parse_remarks(tokens)
+    assert_equals(parser.parsed_metar["hourly_temp_dewpoint"], "T02000106")
 
   @classmethod
   def teardown_class(cls):

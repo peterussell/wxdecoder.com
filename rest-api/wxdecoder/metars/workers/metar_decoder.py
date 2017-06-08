@@ -38,6 +38,7 @@ class MetarDecoder:
     self.decode_hourly_precip(json_metar["hourly_precip"])
     self.decode_three_six_hour_precip(json_metar["three_six_hour_precip"])
     self.decode_twenty_four_hour_precip(json_metar["twenty_four_hour_precip"])
+    self.decode_hourly_temp_dewpoint(json_metar["hourly_temp_dewpoint"])
     self.decode_pressure_tendency(json_metar["pressure_tendency"])
     self.decode_sensor_status(json_metar["sensor_status"])
 
@@ -302,7 +303,7 @@ class MetarDecoder:
           localized_alt = self.localize_num(int_alt)
           decoded_layer += " at %s feet" % localized_alt
         except ValueError:
-          # TODO: couldn't convert altitude to an int, log or throw
+          # TODO: couldn't convert altitude to an int; log or throw
           pass
 
       # Add on the cumulonimbus/towering cumulus modifiers
@@ -445,6 +446,33 @@ class MetarDecoder:
 
   def decode_twenty_four_hour_precip(self, val):
     pass
+
+  def decode_hourly_temp_dewpoint(self, val):
+    if val == "":
+      return
+
+    # Format: T([W]XYZ)([A]BCD)
+    # -> W:    temp modifier (1=negative, 0=positive)
+    # -> XYZ:  temp, 1/10 precision
+    # -> A:    dewpoint modifier
+    # -> BCD:  dewpoint, 1/10 precision
+    key = "hourly_temp_dewpoint"
+    self.copy_orig_value(key, val)
+    try:
+      temp_mod = int(val[1:2])
+      temp = float(val[2:5]) / 10
+      dewpoint_mod = int(val[5:6])
+      dewpoint = float(val[6:]) / 10
+    except ValueError:
+      # TODO: couldn't parse a value; should log or throw
+      pass
+
+    if temp_mod:
+      temp = temp * -1.0
+    if dewpoint_mod:
+      dewpoint = dewpoint * -1.0
+
+    self.decoded_metar[key][self.DECODED_KEY] = [temp, dewpoint]
 
   def decode_pressure_tendency(self, val):
     pass

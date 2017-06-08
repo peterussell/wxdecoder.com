@@ -436,7 +436,7 @@ class TestMetarController:
     res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
     assert_equals(res, "sea level pressure is 1,049.9 hPa")
 
-  def test_decode_sea_level_pressure_is_garbarge(self):
+  def test_decode_sea_level_pressure_is_garbage(self):
     val = "noSLPforyou"
     decoder = MetarDecoder()
     decoder.decode_sea_level_pressure(val)
@@ -450,10 +450,44 @@ class TestMetarController:
     res = decoder.decoded_metar["sea_level_pressure"][self.DECODED_KEY]
     assert_equals(res, "sea level pressure unavailable")
 
-  # TODO: delete this when remarks decoding is running
-#  def test_decode_remarks_temp_test_remarks_get_copied_to_decoded_field(self):
-#    val = "RMK AO2 SLP120 T10221044 10000 21022 55002"
-#    decoder = MetarDecoder()
-#    decoder.decode_remarks(val)
-#    res = decoder.decoded_metar["remarks"][self.DECODED_KEY]
-#    assert_equals(res, val)
+  def test_decode_hourly_temp_dewpoint(self):
+    val = "T00560050"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [5.6, 5.0])
+
+  def test_decode_hourly_temp_dewpoint_both_negative(self):
+    val = "T11631172"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [-16.3, -17.2])
+
+  def test_decode_hourly_temp_dewpoint_temp_neg_dewpoint_pos(self):
+    val = "T10230012"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [-2.3, 1.2])
+
+  def test_decode_hourly_temp_dewpoint_temp_pos_dewpoint_neg(self):
+    val = "T00801010"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [8.0, -1.0])
+
+  def test_decode_hourly_temp_dewpoint_both_zero(self):
+    val = "T00000000"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [0.0, 0.0])
+
+  def test_decode_hourly_temp_dewpoint_both_neg_eleven_point_one(self):
+    val = "T11111111"
+    decoder = MetarDecoder()
+    decoder.decode_hourly_temp_dewpoint(val)
+    res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
+    assert_equals(res, [-11.1, -11.1])

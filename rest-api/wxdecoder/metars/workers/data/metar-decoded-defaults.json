@@ -273,6 +273,15 @@
         "link": ""
       }
     },
+    "hourly_temp_dewpoint": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
     "pressure_tendency": {
       "orig": "",
       "decoded": "",

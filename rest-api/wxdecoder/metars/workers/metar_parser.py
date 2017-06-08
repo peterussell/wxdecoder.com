@@ -148,6 +148,9 @@ class MetarParser:
       # Sea level pressure
       if rt.startswith('SLP'):
         processed_tokens.append(self.parse_rmk_sea_level_pressure(rt))
+      # Hourly temperature and dewpoint
+      if rt.startswith('T') and unicode(rt[1:], 'utf-8').isnumeric():
+        processed_tokens.append(self.parse_rmk_hourly_temp_dewpoint(rt))
       # Maintenance required
       if rt == '$':
         processed_tokens.append(self.parse_rmk_maint_reqd(rt))
@@ -181,7 +184,6 @@ class MetarParser:
     if start_index+2 < len(tokens) and tokens[start_index+2] == 'FROPA':
       ws_tokens.append('FROPA')
     self.parsed_metar["wind_shift"] = ' '.join(ws_tokens)
-    print ws_tokens
     return ws_tokens
 
   def parse_rmk_pressure_rise_fall_rapid(self, token):
@@ -193,6 +195,10 @@ class MetarParser:
     if token.startswith('SLP'):
       self.parsed_metar["sea_level_pressure"] = token
       return token
+
+  def parse_rmk_hourly_temp_dewpoint(self, token):
+    self.parsed_metar["hourly_temp_dewpoint"] = token
+    return token
 
   def parse_rmk_maint_reqd(self, token):
     if token == '$':
