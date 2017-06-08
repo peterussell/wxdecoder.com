@@ -455,39 +455,57 @@ class TestMetarController:
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [5.6, 5.0])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is 5.6%sC, " \
+                       "hourly dewpoint is 5.0%sC" % \
+                       (degree_sign, degree_sign))
 
   def test_decode_hourly_temp_dewpoint_both_negative(self):
     val = "T11631172"
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [-16.3, -17.2])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is -16.3%sC, " \
+                       "hourly dewpoint is -17.2%sC" % \
+                       (degree_sign, degree_sign))
 
   def test_decode_hourly_temp_dewpoint_temp_neg_dewpoint_pos(self):
     val = "T10230012"
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [-2.3, 1.2])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is -2.3%sC, " \
+                       "hourly dewpoint is 1.2%sC" % \
+                       (degree_sign, degree_sign))
 
   def test_decode_hourly_temp_dewpoint_temp_pos_dewpoint_neg(self):
     val = "T00801010"
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [8.0, -1.0])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is 8.0%sC, " \
+                       "hourly dewpoint is -1.0%sC" % \
+                       (degree_sign, degree_sign))
 
   def test_decode_hourly_temp_dewpoint_both_zero(self):
     val = "T00000000"
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [0.0, 0.0])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is 0.0%sC, " \
+                       "hourly dewpoint is 0.0%sC" % \
+                       (degree_sign, degree_sign))
 
   def test_decode_hourly_temp_dewpoint_both_neg_eleven_point_one(self):
     val = "T11111111"
     decoder = MetarDecoder()
     decoder.decode_hourly_temp_dewpoint(val)
     res = decoder.decoded_metar["hourly_temp_dewpoint"][self.DECODED_KEY]
-    assert_equals(res, [-11.1, -11.1])
+    degree_sign = u'\N{DEGREE SIGN}'
+    assert_equals(res, "hourly temperature is -11.1%sC, " \
+                       "hourly dewpoint is -11.1%sC" % \
+                       (degree_sign, degree_sign))

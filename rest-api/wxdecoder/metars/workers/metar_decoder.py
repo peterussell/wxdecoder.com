@@ -472,7 +472,10 @@ class MetarDecoder:
     if dewpoint_mod:
       dewpoint = dewpoint * -1.0
 
-    self.decoded_metar[key][self.DECODED_KEY] = [temp, dewpoint]
+    degree_sign = u'\N{DEGREE SIGN}'
+    self.decoded_metar[key][self.DECODED_KEY] = \
+      "hourly temperature is %s%sC, hourly dewpoint is %s%sC" % \
+      (temp, degree_sign, dewpoint, degree_sign)
 
   def decode_pressure_tendency(self, val):
     pass
