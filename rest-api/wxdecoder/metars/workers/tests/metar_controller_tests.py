@@ -79,3 +79,19 @@ class TestMetarController:
     assert_equals(res['remarks'], "")
     assert_equals(res['misc'], '')
 
+  def test_parse_raw_metar_to_json_ksql_20_jun_17(self):
+    metar = 'KSQL 201455Z VRB03KT 10SM SKC 19/14 A2987'
+    controller = MetarController()
+    res = controller.parse_raw_metar_to_json(metar)
+    assert_equals(res['is_special_report'], False)
+    assert_equals(res['icao_id'], "KSQL")
+    assert_equals(res['obs_datetime'], "201455Z")
+    assert_equals(res['mod_auto'], False)
+    assert_equals(res['wind_dir_speed'], "VRB03KT")
+    assert_equals(res['wind_dir_variation'], "")
+    assert_equals(res['vis'], "10SM")
+    assert_equals(res['sky_condition'], ["SKC"])
+    assert_equals(res['temp'], "19")
+    assert_equals(res['dewpoint'], "14")
+    assert_equals(res['altimeter'], "2987")
+    assert_equals(res['remarks'], "")

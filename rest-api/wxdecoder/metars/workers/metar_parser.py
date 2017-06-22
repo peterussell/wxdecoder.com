@@ -226,7 +226,8 @@ class MetarParser:
     return False
 
   def is_sky_condition_token(self, token):
-    if token.startswith('CLR') or \
+    if token.startswith('SKC') or \
+       token.startswith('CLR') or \
        token.startswith('FEW') or \
        token.startswith('SCT') or \
        token.startswith('BKN') or \
