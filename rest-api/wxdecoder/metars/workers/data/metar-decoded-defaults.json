@@ -13,7 +13,7 @@
       "orig": "",
       "decoded": "",
       "description": {
-        "general": "In general, the first letter of an ICAO code is allocated by continent and represents a country or group of countries. The second letter generally represents a country within that region, and the remaining two letters used to identify the airport. The exception is larger countries that have single-letter country codes and three letter airport identifiers, such as in the US. <a href='https://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code#Prefixes'>List of ICAO prefixes</a>.",
+        "general": "In general, the first letter of an ICAO code is allocated by continent and represents a country or group of countries.<br>The second letter generally represents a country within that region, and the remaining two letters used to identify the airport.<br>The exception is larger countries that have single-letter country codes and three letter airport identifiers, such as in the US.",
         "this_metar": "",
         "link": "https://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code#Structure"
       }
@@ -25,7 +25,7 @@
         "time": ""
       },
       "description": {
-        "general": "The first two digits of the time/date field represent the day of the month. The next four represent the observation time in (24-hour) Zulu Time, and the trailing 'Z' further indicates the report observation time is in Zulu time.",
+        "general": "The first two digits of the time/date field represent the day of the month. The next four represent the observation time in 24-hour format, and the trailing 'Z' indicates the time is in Zulu time.",
         "this_metar": "",
         "link": ""
       }
@@ -43,7 +43,7 @@
       "orig": "",
       "decoded": "",
       "description": {
-        "general": "",
+        "general": "The first three digits indicate the direction the wind is coming from, in tens of degrees from True North. The next two digits indicate the speed in knots. Calm winds are reported as '00000KT'.<br><br>If gusts are present the letter 'G' follows the wind speed value, followed by another two digits indicating the maximum observed wind speed, eg. 21016G24KT.<br><br>If wind direction varies by 60&deg; or more: <ul><li>If speed is <i>greater</i> than 6 knots - the two observed directions are reported separated by a 'V', eg. 180V240.</li><li>If speed is <i>less</i> than 6 knots, wind direction is replaced by 'VRB' followed by wind speed in knots, eg. VRB05KT.",
         "this_metar": "",
         "link": ""
       }
