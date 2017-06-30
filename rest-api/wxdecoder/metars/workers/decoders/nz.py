@@ -5,6 +5,13 @@ import locale
 
 class MetarDecoderNZ:
 
+  def __init__(self):
+    # Load defaults
+    with open('metars/workers/data/nz/metar-decoded-defaults.json') as decoded_metar_file:
+      contents = json.load(decoded_metar_file)
+      self.decoded_metar = contents["metar"]
+      locale.setlocale(locale.LC_ALL, '')
+
   DECODED_KEY = "decoded"
 
   def decode_metar(self, json_metar):
@@ -505,11 +512,3 @@ class MetarDecoderNZ:
 
   def localize_num(self, val, format_specifier="%d"):
     return locale.format(format_specifier, float(val), grouping=True)
-
-  def __init__(self):
-    # Load defaults
-
-    with open('metars/workers/data/metar-decoded-defaults.json') as decoded_metar_file:
-      contents = json.load(decoded_metar_file)
-      self.decoded_metar = contents["metar"]
-      locale.setlocale(locale.LC_ALL, '')

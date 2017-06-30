@@ -1,0 +1,322 @@
+{
+  "metar": {
+    "is_special_report": {
+      "orig": false,
+      "decoded": false,
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "icao_id": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "In general, the first letter of an ICAO code is allocated by continent and represents a country or group of countries.<br>The second letter generally represents a country within that region, and the remaining two letters used to identify the airport.<br>The exception is larger countries that have single-letter country codes and three letter airport identifiers, such as in the US.",
+        "this_metar": "",
+        "link": "https://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code#Structure"
+      }
+    },
+    "obs_datetime": {
+      "orig": "",
+      "decoded": {
+        "date": "",
+        "time": ""
+      },
+      "description": {
+        "general": "The first two digits of the time/date field represent the day of the month. The next four represent the observation time in 24-hour format, and the trailing 'Z' indicates the time is in Zulu time.",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "mod_auto": {
+      "orig": false,
+      "decoded": false,
+      "description": {
+        "general": "Indicates a fully automated report with no human intervention. 'AUTO' is removed when an observer logs into the system.",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "wind_dir_speed": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "The first three digits indicate the direction the wind is coming from, in tens of degrees from True North. The next two digits indicate the speed in knots. Calm winds are reported as '00000KT'.<br><br>If gusts are present the letter 'G' follows the wind speed value, followed by another two digits indicating the maximum observed wind speed, eg. 21016G24KT.<br><br>If wind direction varies by 60&deg; or more: <ul><li>If speed is <i>greater</i> than 6 knots - the two observed directions are reported separated by a 'V', eg. 180V240.</li><li>If speed is <i>less</i> than 6 knots, wind direction is replaced by 'VRB' followed by wind speed in knots, eg. VRB05KT.",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "wind_dir_variation": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "vis": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "rvr": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "wx_phenomena": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "sky_condition": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "temp": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "dewpoint": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "altimeter": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "remarks": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "no_sig": {
+      "orig": false,
+      "decoded": false,
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "tornadic_activity": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "stn_type": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "peak_wind": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "wind_shift": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "variable_vis": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "vis_second_loc": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "lightning": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "precip_ts": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "virga": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "variable_ceiling": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "ceiling_second_loc": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "pressure_rise_fall_rapid": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "sea_level_pressure": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "hourly_precip": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "three_six_hour_precip": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "twenty_four_hour_precip": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "hourly_temp_dewpoint": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "pressure_tendency": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "sensor_status": {
+      "orig": [],
+      "decoded": [],
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    },
+    "maint_reqd": {
+      "orig": "",
+      "decoded": "",
+      "description": {
+        "general": "",
+        "this_metar": "",
+        "link": ""
+      }
+    }
+  }
+}

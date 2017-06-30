@@ -2,6 +2,12 @@ import json
 
 class MetarParserDefault:
 
+  def __init__(self):
+    # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
+    with open('metars/workers/data/default/metar-defaults.json') as metar_file:
+      contents = json.load(metar_file)
+      self.parsed_metar = contents["metar"]
+
   def parse_metar(self, raw_metar):
     tokens = raw_metar.split()
     return self.parse_tokens(tokens)
@@ -235,9 +241,3 @@ class MetarParserDefault:
        token.startswith('VV'):
       return True
     return False
-
-  def __init__(self):
-    # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
-    with open('metars/workers/data/metar-defaults.json') as metar_file:
-      contents = json.load(metar_file)
-      self.parsed_metar = contents["metar"]

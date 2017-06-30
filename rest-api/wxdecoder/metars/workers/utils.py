@@ -6,3 +6,10 @@ def get_icao_id_from_raw_metar(raw_metar):
   if raw_metar.startswith("METAR") or raw_metar.startswith("SPECI"):
     raw_metar = raw_metar[len("METAR "):]
   return raw_metar[:raw_metar.find(' ')]
+
+def is_numeric(val):
+  try:
+    int(val)
+    return True
+  except ValueError:
+    return False

@@ -1,6 +1,13 @@
 import json
+import metars.workers.utils as utils
 
 class MetarParserNZ:
+
+  def __init__(self):
+    # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
+    with open('metars/workers/data/nz/metar-defaults.json') as metar_file:
+      contents = json.load(metar_file)
+      self.parsed_metar = contents["metar"]
 
   def parse_metar(self, raw_metar):
     tokens = raw_metar.split()
@@ -26,6 +33,7 @@ class MetarParserNZ:
     tokens = self.parse_sky_condition(tokens)
     tokens = self.parse_temp_dewpoint(tokens)
     tokens = self.parse_altimeter(tokens)
+    tokens = self.parse_no_sig(tokens)
     tokens = self.parse_remarks(tokens)
 
     # Store any remaining tokens as remarks (for now)
@@ -68,7 +76,7 @@ class MetarParserNZ:
     return tokens
 
   def parse_visibility(self, tokens):
-    if tokens[0].endswith('SM'):
+    if tokens[0].endswith('KM') or utils.is_numeric(tokens[0]):
       self.parsed_metar["vis"] = tokens.pop(0)
     return tokens
 
@@ -114,9 +122,14 @@ class MetarParserNZ:
     return tokens
 
   def parse_altimeter(self, tokens):
-    if tokens[0].startswith('A'):
-      tok = tokens.pop(0)
-      self.parsed_metar["altimeter"] = tok.replace('A', '')
+    if tokens[0].startswith('Q'):
+      self.parsed_metar["altimeter"] = tokens.pop(0)
+    return tokens
+
+  def parse_no_sig(self, tokens):
+    if tokens[0] == 'NOSIG':
+      self.parsed_metar["no_sig"] = True
+      tokens.pop(0)
     return tokens
 
   def parse_remarks(self, tokens):
@@ -235,9 +248,3 @@ class MetarParserNZ:
        token.startswith('VV'):
       return True
     return False
-
-  def __init__(self):
-    # Set default METAR components. See http://www.met.tamu.edu/class/metar/quick-metar.html
-    with open('metars/workers/data/metar-defaults.json') as metar_file:
-      contents = json.load(metar_file)
-      self.parsed_metar = contents["metar"]
