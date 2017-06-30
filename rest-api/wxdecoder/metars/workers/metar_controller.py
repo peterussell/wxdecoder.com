@@ -1,7 +1,7 @@
-from metar_parser import MetarParser
-from metar_decoder import MetarDecoder
-from metar_parser_nz import MetarParserNZ
-from metar_decoder_nz import MetarDecoderNZ
+from parsers.mp_default import MetarParserDefault
+from decoders.md_default import MetarDecoderDefault
+from parsers.mp_nz import MetarParserNZ
+from decoders.md_nz import MetarDecoderNZ
 from avwx_proxy import AVWXProxy
 import utils
 
@@ -40,12 +40,12 @@ class MetarController:
 
   def _get_parser_for_country(self, country):
     if country is 'US':
-      return MetarParser()
+      return MetarParserDefault()
     if country is 'NZ':
       return MetarParserNZ()
 
   def _get_decoder_for_country(self, country):
     if country is 'US':
-      return MetarDecoder()
+      return MetarDecoderDefault()
     if country is 'NZ':
       return MetarDecoderNZ()

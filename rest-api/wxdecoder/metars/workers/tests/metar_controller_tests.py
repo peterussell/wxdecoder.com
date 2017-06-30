@@ -2,10 +2,10 @@ from nose import with_setup
 from nose.tools import assert_equals, assert_true
 
 from metars.workers.metar_controller import MetarController
-from metars.workers.metar_parser import MetarParser
-from metars.workers.metar_decoder import MetarDecoder
-from metars.workers.metar_parser_nz import MetarParserNZ
-from metars.workers.metar_decoder_nz import MetarDecoderNZ
+from metars.workers.parsers.mp_default import MetarParserDefault
+from metars.workers.decoders.md_default import MetarDecoderDefault
+from metars.workers.parsers.mp_nz import MetarParserNZ
+from metars.workers.decoders.md_nz import MetarDecoderNZ
 
 class TestMetarController:
 
@@ -119,12 +119,12 @@ class TestMetarController:
   def test_get_parser_for_country_us(self):
     controller = MetarController()
     parser = controller._get_parser_for_country('US')
-    assert_true(isinstance(parser, MetarParser))
+    assert_true(isinstance(parser, MetarParserDefault))
 
   def test_get_decoder_for_country_us(self):
     controller = MetarController()
     decoder = controller._get_decoder_for_country('US')
-    assert_true(isinstance(decoder, MetarDecoder))
+    assert_true(isinstance(decoder, MetarDecoderDefault))
 
   def test_get_parser_for_country_nz(self):
     controller = MetarController()

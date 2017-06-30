@@ -3,7 +3,7 @@
 import json
 import locale
 
-class MetarDecoder:
+class MetarDecoderDefault:
 
   DECODED_KEY = "decoded"
 

@@ -1,6 +1,6 @@
 import json
 
-class MetarParser:
+class MetarParserDefault:
 
   def parse_metar(self, raw_metar):
     tokens = raw_metar.split()
