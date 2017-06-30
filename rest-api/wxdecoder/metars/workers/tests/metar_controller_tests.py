@@ -1,7 +1,11 @@
 from nose import with_setup
-from nose.tools import assert_equals
+from nose.tools import assert_equals, assert_true
 
 from metars.workers.metar_controller import MetarController
+from metars.workers.metar_parser import MetarParser
+from metars.workers.metar_decoder import MetarDecoder
+from metars.workers.metar_parser_nz import MetarParserNZ
+from metars.workers.metar_decoder_nz import MetarDecoderNZ
 
 class TestMetarController:
 
@@ -13,7 +17,8 @@ class TestMetarController:
     metar = 'METAR KHIO 290653Z AUTO 00000KT 10SM FEW032 OVC041 06/05 ' \
             'A3017 RMK AO2 RAB35E44 SLP219 P0000 T00560050'
     controller = MetarController()
-    res = controller.parse_raw_metar_to_json(metar)
+    country = controller._get_country_from_raw_metar(metar)
+    res = controller.parse_raw_metar_to_json(metar, country)
     assert_equals(res['is_special_report'], False)
     assert_equals(res['icao_id'], "KHIO")
     assert_equals(res['obs_datetime'], "290653Z")
@@ -39,7 +44,8 @@ class TestMetarController:
     metar = 'METAR KHIO 241953Z 00000KT 1/4SM R13R/1200V1800FT FG VV002 ' \
             '00/M01 A2996 RMK AO2 SLP150 T00001006'
     controller = MetarController()
-    res = controller.parse_raw_metar_to_json(metar)
+    country = controller._get_country_from_raw_metar(metar)
+    res = controller.parse_raw_metar_to_json(metar, country)
     assert_equals(res['is_special_report'], False)
     assert_equals(res['icao_id'], "KHIO")
     assert_equals(res['obs_datetime'], "241953Z")
@@ -62,7 +68,8 @@ class TestMetarController:
   def test_parse_raw_metar_to_json_khio_31_mar_17(self):
     metar = 'KHIO 010053Z 00000KT 10SM CLR 14/06 A3026 RMK AO2 SLP247 T01440056'
     controller = MetarController()
-    res = controller.parse_raw_metar_to_json(metar)
+    country = controller._get_country_from_raw_metar(metar)
+    res = controller.parse_raw_metar_to_json(metar, country)
     assert_equals(res['is_special_report'], False)
     assert_equals(res['icao_id'], "KHIO")
     assert_equals(res['obs_datetime'], "010053Z")
@@ -82,7 +89,8 @@ class TestMetarController:
   def test_parse_raw_metar_to_json_ksql_20_jun_17(self):
     metar = 'KSQL 201455Z VRB03KT 10SM SKC 19/14 A2987'
     controller = MetarController()
-    res = controller.parse_raw_metar_to_json(metar)
+    country = controller._get_country_from_raw_metar(metar)
+    res = controller.parse_raw_metar_to_json(metar, country)
     assert_equals(res['is_special_report'], False)
     assert_equals(res['icao_id'], "KSQL")
     assert_equals(res['obs_datetime'], "201455Z")
@@ -95,3 +103,35 @@ class TestMetarController:
     assert_equals(res['dewpoint'], "14")
     assert_equals(res['altimeter'], "2987")
     assert_equals(res['remarks'], "")
+
+  def test_get_country_from_raw_metar_us(self):
+    metar = 'KPDX 300453Z 31009KT 10SM FEW250 22/14 A3004'
+    controller = MetarController()
+    res = controller._get_country_from_raw_metar(metar)
+    assert_equals(res, 'US')
+
+  def test_get_country_from_raw_metar_nz(self):
+    metar = 'NZWN 300530Z AUTO 36014KT 9999'
+    controller = MetarController()
+    res = controller._get_country_from_raw_metar(metar)
+    assert_equals(res, 'NZ')
+
+  def test_get_parser_for_country_us(self):
+    controller = MetarController()
+    parser = controller._get_parser_for_country('US')
+    assert_true(isinstance(parser, MetarParser))
+
+  def test_get_decoder_for_country_us(self):
+    controller = MetarController()
+    decoder = controller._get_decoder_for_country('US')
+    assert_true(isinstance(decoder, MetarDecoder))
+
+  def test_get_parser_for_country_nz(self):
+    controller = MetarController()
+    parser = controller._get_parser_for_country('NZ')
+    assert_true(isinstance(parser, MetarParserNZ))
+
+  def test_get_decoder_for_country_nz(self):
+    controller = MetarController()
+    decoder = controller._get_decoder_for_country('NZ')
+    assert_true(isinstance(decoder, MetarDecoderNZ))
