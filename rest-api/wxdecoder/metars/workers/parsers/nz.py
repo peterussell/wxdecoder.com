@@ -36,7 +36,7 @@ class MetarParserNZ:
     tokens = self.parse_no_sig(tokens)
     tokens = self.parse_remarks(tokens)
 
-    # Store any remaining tokens as remarks (for now)
+    # Store any remaining tokens as misc
     self.parsed_metar["misc"] = ' '.join(tokens)
 
     # Return any remaining tokens

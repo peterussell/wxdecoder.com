@@ -130,19 +130,25 @@ class MetarDecoderNZ:
   def decode_vis(self, val):
     key = "vis"
     self.copy_orig_value(key, val)
+    if val == "": return
 
-    sm_index = val.find("SM")
-    # Handle vis < 1/4SM ("M1/4SM")
-    if val.startswith("M"):
-      vis_dist = val[1:sm_index]
-      self.decoded_metar["vis"][self.DECODED_KEY] = \
-        "less than %s statute mile" % vis_dist
+    if val == "////":
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "not reported (possibly due to a faulty sensor)"
       return
 
-    vis_dist = val[:sm_index]
-    vis_unit = self.get_pluralized_unit(vis_dist, "statute mile")
-    self.decoded_metar["vis"][self.DECODED_KEY] = \
-      "%s %s" % (vis_dist, vis_unit)
+    res = ""
+    if val == "9999":
+      res = "10 kilometres or more"
+    elif val == "CAVOK":
+      res = "10 kilometres or more (Ceiling And Visibility OK)"
+    elif "KM" in val:
+      val_num_only = val.replace("KM", '')
+      res = "%s %s" % (val_num_only,
+                       self.get_pluralized_unit(val_num_only, "kilometre"))
+    else:
+      res = "%s metres" % self.localize_num(val)
+    self.decoded_metar[key][self.DECODED_KEY] = res
 
   def decode_rvr(self, val):
     key = "rvr"
@@ -152,9 +158,17 @@ class MetarDecoderNZ:
     parts = val.split("/")
     rwy_part = parts[0].strip()
     rvr_part = parts[1].strip()
+
     trend_part = None
-    if len(parts) == 3:
-      trend_part = parts[2].strip()
+    if val.endswith("U"):
+      trend_part = "U"
+      rvr_part = rvr_part[:-1]
+    elif val.endswith("D"):
+      trend_part = "D"
+      rvr_part = rvr_part[:-1]
+    elif val.endswith("N"):
+      trend_part = "N"
+      rvr_part = rvr_part[:-1]
 
     res_rwy = ""
     res_modifier = ""
@@ -172,21 +186,8 @@ class MetarDecoderNZ:
       res_modifier = "more than "
       rvr_part = rvr_part[1:]
 
-    ft_index = rvr_part.find("FT")
-
-    # RVR - variable
-    if rvr_part.find("V") != -1: # has a variable component
-      variable_from, variable_to = rvr_part.split("V")
-      ft_index_variable = variable_to.find("FT")
-      # Insert some commas
-      variable_from = self.localize_num(variable_from[:ft_index])
-      variable_to = self.localize_num(variable_to[:ft_index_variable])
-      res_rvr = "variable, from %s to %s feet" % \
-        (variable_from, variable_to)
-
     # RVR - non-variable
-    else:
-      res_rvr = "%s feet" % self.localize_num(rvr_part[:ft_index])
+    res_rvr = "%s metres" % self.localize_num(rvr_part)
 
     # Trend
     if trend_part:
@@ -205,6 +206,11 @@ class MetarDecoderNZ:
     key = "wx_phenomena"
     self.copy_orig_value(key, val)
     del self.decoded_metar[key][self.DECODED_KEY][:]
+
+    if val == "//":
+      self.decoded_metar[key][self.DECODED_KEY] = \
+        "none reported, sensor temporarily inoperative"
+      return
 
     # Load the mappings (METAR code -> plain English)
     with open('metars/workers/data/wx-phenomena.json') as wxp:
@@ -270,6 +276,23 @@ class MetarDecoderNZ:
         self.decoded_metar[key][self.DECODED_KEY].append( \
           "no clouds below 12,000 feet")
         continue
+      elif layer.startswith("NCD"):
+        icao_id = self.decoded_metar["icao_id"][self.DECODED_KEY]
+        if icao_id is 'NZAA' or icao_id is 'NZWN' or icao_id is 'NZCH':
+          self.decoded_metar[key][self.DECODED_KEY].append( \
+            "no cloud detected below 10,000 feet")
+        else:
+          self.decoded_metar[key][self.DECODED_KEY].append( \
+            "no cloud detected")
+        continue
+      elif layer == "/////////":
+        self.decoded_metar[key][self.DECODED_KEY].append( \
+          "not reported (possibly due to a faulty sensor)")
+        return
+      elif layer == "VV///":
+        self.decoded_metar[key][self.DECODED_KEY].append( \
+          "vertical visibility unavailable")
+        continue
 
       # Handle indefinite ceiling and change the prefix length to 2
       elif layer.startswith("VV"):
@@ -289,6 +312,7 @@ class MetarDecoderNZ:
       # Check for a cumulonimbus or towering cumulus modifier
       is_cb = False
       is_tcu = False
+      is_cloud_type_unavailable = False
       modifier_len = 0 # default
       if layer.endswith("CB"):
         is_cb = True
@@ -296,28 +320,29 @@ class MetarDecoderNZ:
       if layer.endswith("TCU"):
         is_tcu = True
         modifier_len = 3
+      if layer.endswith("///"):
+        is_cloud_type_unavailable = True
+        modifier_len = 3
 
       # Altitude (anything else)
       altitude = layer[layer_type_len:len(layer)-modifier_len]
 
-      # Special case: "///" = cloud layer below station
-      if altitude == "///":
-        decoded_layer += " below reporting station elevation"
-      else:
-        altitude = altitude.lstrip("0")
-        try:
-          int_alt = int(altitude) * 100
-          localized_alt = self.localize_num(int_alt)
-          decoded_layer += " at %s feet" % localized_alt
-        except ValueError:
-          # TODO: couldn't convert altitude to an int; log or throw
-          pass
+      altitude = altitude.lstrip("0")
+      try:
+        int_alt = int(altitude) * 100
+        localized_alt = self.localize_num(int_alt)
+        decoded_layer += " at %s feet" % localized_alt
+      except ValueError:
+        # TODO: couldn't convert altitude to an int; log or throw
+        pass
 
       # Add on the cumulonimbus/towering cumulus modifiers
       if is_cb:
         decoded_layer += " (cumulonimbus)"
       if is_tcu:
         decoded_layer += " (towering cumulus)"
+      if is_cloud_type_unavailable:
+        decoded_layer += " (unable to determine cloud type)"
 
       # Put it together...
       self.decoded_metar[key][self.DECODED_KEY].append(decoded_layer)
@@ -350,9 +375,9 @@ class MetarDecoderNZ:
   def decode_altimeter(self, val):
     key = "altimeter"
     self.copy_orig_value(key, val)
-    val = val.lstrip("A")
+    val = val.lstrip("Q")
     self.decoded_metar[key][self.DECODED_KEY] = \
-      "%s.%s\"Hg" % (val[:2], val[2:])
+      "%s hPa" % self.localize_num(val)
 
   def decode_remarks(self, val):
     key = "remarks"
