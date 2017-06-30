@@ -2,10 +2,10 @@ from nose import with_setup
 from nose.tools import assert_equals, assert_true
 
 from metars.workers.metar_controller import MetarController
-from metars.workers.parsers.mp_default import MetarParserDefault
-from metars.workers.decoders.md_default import MetarDecoderDefault
-from metars.workers.parsers.mp_nz import MetarParserNZ
-from metars.workers.decoders.md_nz import MetarDecoderNZ
+from metars.workers.parsers.default import MetarParserDefault
+from metars.workers.decoders.default import MetarDecoderDefault
+from metars.workers.parsers.nz import MetarParserNZ
+from metars.workers.decoders.nz import MetarDecoderNZ
 
 class TestMetarController:
 

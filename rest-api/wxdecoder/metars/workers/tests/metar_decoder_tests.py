@@ -4,7 +4,7 @@ from nose import with_setup
 from nose.tools import assert_equals
 import json
 
-from metars.workers.decoders.md_default import MetarDecoderDefault
+from metars.workers.decoders.default import MetarDecoderDefault
 
 class TestMetarController:
 

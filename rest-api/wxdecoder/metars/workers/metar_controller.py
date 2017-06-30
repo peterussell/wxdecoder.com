@@ -1,7 +1,7 @@
-from parsers.mp_default import MetarParserDefault
-from decoders.md_default import MetarDecoderDefault
-from parsers.mp_nz import MetarParserNZ
-from decoders.md_nz import MetarDecoderNZ
+from parsers.default import MetarParserDefault
+from decoders.default import MetarDecoderDefault
+from parsers.nz import MetarParserNZ
+from decoders.nz import MetarDecoderNZ
 from avwx_proxy import AVWXProxy
 import utils
 

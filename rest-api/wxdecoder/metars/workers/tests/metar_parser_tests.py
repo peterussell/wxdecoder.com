@@ -1,7 +1,7 @@
 from nose import with_setup
 from nose.tools import assert_equals
 
-from metars.workers.parsers.mp_default import MetarParserDefault
+from metars.workers.parsers.default import MetarParserDefault
 
 class TestMetarParser:
 
