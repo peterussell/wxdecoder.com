@@ -34,6 +34,7 @@
     "hourly_temp_dewpoint": "",
     "pressure_tendency": "",
     "sensor_status": [],
-    "maint_reqd": ""
+    "maint_reqd": "",
+    "misc": "TEMPO 5000 RA BKN012"
   }
 }

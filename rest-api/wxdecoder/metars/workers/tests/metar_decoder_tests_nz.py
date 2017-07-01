@@ -14,6 +14,14 @@ class TestMetarDecoderNZ:
   def setup_class(self):
     pass
 
+  def test_decode_nzch_metar(self):
+    # Basic smoke test to make sure the code gets run through and parser
+    # works, without asserting any results.
+    with open('metars/workers/tests/data/nzch-encoded.json') as data:
+      nzch = json.load(data)
+    decoder = MetarDecoderNZ()
+    decoder.decode_metar(nzch["metar"])
+
   def test_decode_is_special_report(self):
     val = True
     decoder = MetarDecoderNZ()

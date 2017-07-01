@@ -48,8 +48,9 @@ class MetarDecoderNZ:
     self.decode_hourly_temp_dewpoint(json_metar["hourly_temp_dewpoint"])
     self.decode_pressure_tendency(json_metar["pressure_tendency"])
     self.decode_sensor_status(json_metar["sensor_status"])
+    self.decode_maint_reqd(json_metar["maint_reqd"])
+    self.decode_misc(json_metar["misc"])
 
-    # tmp
     return self.decoded_metar
 
   def decode_is_special_report(self, val):
@@ -517,8 +518,15 @@ class MetarDecoderNZ:
 
   def decode_maint_reqd(self, val):
     key = "maint_reqd"
-    self.copy_orig_val(key, val)
+    self.copy_orig_value(key, val)
     # TODO
+
+  def decode_misc(self, val):
+    # For now, just append unknown parts to Remarks
+    if val == "": return
+    key = "remarks"
+    self.copy_orig_value(key, val)
+    self.decoded_metar[key][self.DECODED_KEY] += " %s" % val
 
   ## Helpers
   def copy_orig_value(self, key, value):

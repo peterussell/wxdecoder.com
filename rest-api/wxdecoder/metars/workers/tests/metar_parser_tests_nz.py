@@ -30,7 +30,26 @@ class TestMetarParserNZ:
     assert_equals(parser.parsed_metar["no_sig"], True)
     assert_equals(parser.parsed_metar["misc"], '')
 
-
+  def test_parse_metar_nzaa_tempo(self):
+    metar = 'NZAA 302330Z AUTO 03018KT 9999 -RA SCT015/// BKN022/// BKN050/// ' \
+            '15/14 Q1017 TEMPO 5000 RA BKN012'
+    parser = MetarParserNZ()
+    res = parser.parse_tokens(metar.split())
+    assert_equals(parser.parsed_metar["is_special_report"], False)
+    assert_equals(parser.parsed_metar["icao_id"], 'NZAA')
+    assert_equals(parser.parsed_metar["obs_datetime"], '302330Z')
+    assert_equals(parser.parsed_metar["mod_auto"], True)
+    assert_equals(parser.parsed_metar["wind_dir_speed"], '03018KT')
+    assert_equals(parser.parsed_metar["vis"], '9999')
+    assert_equals(parser.parsed_metar["wx_phenomena"], ['-RA'])
+    assert_equals(parser.parsed_metar["sky_condition"], ['SCT015///', \
+                                                         'BKN022///', \
+                                                         'BKN050///'])
+    assert_equals(parser.parsed_metar["temp"], '15')
+    assert_equals(parser.parsed_metar["dewpoint"], '14')
+    assert_equals(parser.parsed_metar["altimeter"], 'Q1017')
+    assert_equals(parser.parsed_metar["no_sig"], False)
+    assert_equals(parser.parsed_metar["misc"], 'TEMPO 5000 RA BKN012')
 
 #  ### Test full token parser
 #  def test_parse_metar_khio(self):

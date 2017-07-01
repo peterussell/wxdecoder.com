@@ -33,6 +33,7 @@
     "hourly_temp_dewpoint": "T00560050",
     "pressure_tendency": "",
     "sensor_status": [],
-    "maint_reqd": ""
+    "maint_reqd": "",
+    "misc": ""
   }
 }
