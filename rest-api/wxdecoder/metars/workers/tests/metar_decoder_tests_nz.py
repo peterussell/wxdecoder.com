@@ -338,7 +338,7 @@ class TestMetarDecoderNZ:
     decoder = MetarDecoderNZ()
     decoder.decode_sky_condition(val)
     res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
-    assert_equals(res, ["overcast at 4,800 feet (unable to determine cloud type)"])
+    assert_equals(res, ["overcast at 4,800 feet (no cloud type)"])
 
   def test_decode_sky_condition_cumulonimbus(self):
     val = ["SCT085CB"]
@@ -359,10 +359,8 @@ class TestMetarDecoderNZ:
     decoder = MetarDecoderNZ()
     decoder.decode_sky_condition(val)
     res = decoder.decoded_metar["sky_condition"][self.DECODED_KEY]
-    assert_equals(res, ["scattered clouds at 1,600 feet (unable to determine " \
-                        "cloud type)",
-                        "broken clouds at 8,500 feet (unable to determine " \
-                        "cloud type)",
+    assert_equals(res, ["scattered clouds at 1,600 feet (no cloud type)",
+                        "broken clouds at 8,500 feet (no cloud type)",
                         "overcast at 10,000 feet (towering cumulus)"])
 
   def test_decode_temp(self):

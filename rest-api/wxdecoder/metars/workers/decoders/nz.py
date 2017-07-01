@@ -342,7 +342,7 @@ class MetarDecoderNZ:
       if is_tcu:
         decoded_layer += " (towering cumulus)"
       if is_cloud_type_unavailable:
-        decoded_layer += " (unable to determine cloud type)"
+        decoded_layer += " (no cloud type)"
 
       # Put it together...
       self.decoded_metar[key][self.DECODED_KEY].append(decoded_layer)
